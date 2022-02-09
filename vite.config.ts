@@ -7,5 +7,10 @@ export default defineConfig({
   root: './t',
   build: {
     outDir: "../build"
+  },
+  resolve: {
+    alias: {
+      'vue': 'vue/dist/vue.esm-bundler.js'
+    }
   }
 })

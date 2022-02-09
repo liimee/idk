@@ -1,4 +1,4 @@
-import {createApp} from 'vue/dist/vue.esm-bundler';
+import {createApp} from 'vue';
 import {createRouter, createWebHistory} from 'vue-router';
 
 import App from './m/l.vue';
