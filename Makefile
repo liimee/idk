@@ -7,4 +7,4 @@ build_be: main.go
 	go build
 
 dev: build_be
-	yarn dev & DEV=y ./idk
+	yarn dev & DEV=y CL="http://localhost:3000" ./idk

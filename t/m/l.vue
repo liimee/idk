@@ -1,18 +1,18 @@
 <template>
 <h1>Hmm</h1>
 <div class="s">
-  <button>New Game</button>
-  <button>Join Game</button>
+  <router-link to="/n"><button class="a">New Game</button></router-link>
+  <button class="b">Join Game</button>
 </div>
 </template>
 
 <style scoped>
-button:first-child {
+.a:first-child {
   background-color: #D67021;
   box-shadow: 0 4px #ac5a1c;
 }
 
-button:last-child {
+.b:last-child {
   background-color: #2C6E49;
   box-shadow: 0 4px #235739;
 }
@@ -30,7 +30,7 @@ button {
 }
 
 button:active {
-  box-shadow: none;
+  box-shadow: none !important;
   transform: translateY(4px);
 }
 
