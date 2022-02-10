@@ -38,6 +38,7 @@ func main() {
 
 	e.Path("/api/new").Methods("POST").HandlerFunc(New)
 	e.Path("/api/board").Methods("GET").HandlerFunc(func(w http.ResponseWriter, h *http.Request) {
+		w.Header().Add("Access-Control-Allow-Origin", "*")
 		b, _ := json.Marshal(board.Board)
 		w.Write([]byte(b))
 	})
