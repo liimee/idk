@@ -3,7 +3,8 @@
   <div id="board">
     <div class="row" :data-row="x" :key="x" v-for="(_, x) in 4">
       <div class="c" v-for="(s, i) in board.filter((_, e) => Math.floor(e / 10) == x)" :key="i" >
-        {{s.Name}}
+        <div>{{s.Name}}</div>
+        <div>{{['Chance', 'Community Chest', 'IN JAIL', 'Free Parking', 'Go to Jail :)'].includes(s.Name) ? '' : '$'+s.Price}}</div>
       </div>
     </div>
   </div>
