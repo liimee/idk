@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/liimee/idk/board"
 )
 
 type User struct {
@@ -36,6 +37,10 @@ func main() {
 	}
 
 	e.Path("/api/new").Methods("POST").HandlerFunc(New)
+	e.Path("/api/board").Methods("GET").HandlerFunc(func(w http.ResponseWriter, h *http.Request) {
+		b, _ := json.Marshal(board.Board)
+		w.Write([]byte(b))
+	})
 
 	s := ":3000"
 	if dev {
