@@ -1,11 +1,71 @@
 <template>
   <p v-if="err">Cannot load board!</p>
-  <table><tr v-for="i in 11" :key="i">
-    <td v-for="(g, s) in board" :key="s">
-      <div v-if="10-i == Math.floor(s / 11)">{{g.Name}}</div>
-    </td>
-  </tr></table>
+  <div id="board">
+    <div class="row" :data-row="x" :key="x" v-for="(_, x) in 4">
+      <div class="c" v-for="(s, i) in board.filter((_, e) => Math.floor(e / 10) == x)" :key="i" >
+        {{s.Name}}
+      </div>
+    </div>
+  </div>
 </template>
+
+<style scoped>
+  * {
+    box-sizing: border-box;
+  }
+
+  #board {
+    display: grid;
+    grid-auto-columns: 8fr;
+    grid-auto-rows: 9fr;
+    width: max-content;
+    grid-template-areas:
+      "a a a a a a a a a a a d"
+      "b o o o o o o o o o o d"
+      "b o o o o o o o o o o d"
+      "b o o o o o o o o o o d"
+      "b o o o o o o o o o o d"
+      "b o o o o o o o o o o d"
+      "b o o o o o o o o o o d"
+      "b o o o o o o o o o o d"
+      "b o o o o o o o o o o d"
+      "b o o o o o o o o o o d"
+      "b c c c c c c c c c c c";
+  }
+
+  .row {
+    display: flex;
+  }
+
+  .row[data-row="0"] {
+   grid-area: c;
+   flex-direction: row-reverse;
+  }
+
+  .row[data-row="1"] {
+   grid-area: b;
+   flex-direction: column-reverse;
+  }
+
+  .row[data-row="2"] {
+   grid-area: a;
+   flex-direction: row;
+  }
+  
+  .row[data-row="3"] {
+   grid-area: d;
+   flex-direction: column;
+  }
+
+  .c {
+    border: solid 3px #000;
+    width: 100%;
+    height: 100%;
+    word-break: break-all;
+    padding: 1em;
+    overflow: hidden;
+  }
+</style>
 
 <script lang="ts">
 export default {
