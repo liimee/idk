@@ -13,9 +13,20 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type User struct {
+	Name string
+}
+
+type Game struct {
+	Players []User
+}
+
 //go:embed build/*
 var f embed.FS
+
 var dev = os.Getenv("DEV") == "y"
+
+var gs = map[string]Game{}
 
 func main() {
 	e := mux.NewRouter()
@@ -41,7 +52,9 @@ func New(w http.ResponseWriter, h *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", os.Getenv("CL"))
 	b := make([]byte, 6)
 	rand.Read(b)
-	m, _ := json.Marshal(map[string]string{"id": hex.EncodeToString(b)})
+	id := hex.EncodeToString(b)
+	gs[id] = Game{Players: []User{}}
+	m, _ := json.Marshal(map[string]string{"id": id})
 	w.Write([]byte(m))
 }
 
