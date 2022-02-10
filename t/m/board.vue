@@ -5,6 +5,9 @@
       <div class="c" v-for="(s, i) in board.filter((_, e) => Math.floor(e / 10) == x)" :key="i" >
         <div>{{s.Name}}</div>
         <div>{{['Chance', 'Community Chest', 'IN JAIL', 'Free Parking', 'Go to Jail :)'].includes(s.Name) ? '' : '$'+s.Price}}</div>
+        <div>
+          <span class="player" v-for="(s, x) in dt.filter(v => v.Pos === i && Math.floor(v.Pos / 11) === x)" :key="x">{{s.Name}}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -66,10 +69,18 @@
     padding: 1em;
     overflow: hidden;
   }
+
+  .player {
+    padding: .2em .4em;
+    border-radius: 30px;
+    background-color: blue;
+    color: #fff;
+  }
 </style>
 
 <script lang="ts">
 export default {
+  props: ['dt'],
   data() {
     return {
       board: [],

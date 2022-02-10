@@ -5,7 +5,7 @@
 <template>
   <div class="parent">
   <div class="board" style="">
-    <Board />
+    <Board :dt="da" />
   </div>
   <div style="padding: 1em">
     <div class="center">You currently have
