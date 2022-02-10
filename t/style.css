@@ -9,3 +9,39 @@ body {
 h1 {
   text-align: center;
 }
+
+.a {
+  background-color: #D67021;
+  box-shadow: 0 4px #ac5a1c;
+}
+
+.b {
+  background-color: #2C6E49;
+  box-shadow: 0 4px #235739;
+}
+
+button, [type="submit"] {
+  border-radius: 11px;
+  padding: 1em 3em;
+  width: 25vw;
+  font-size: 1.2em;
+  font-weight: bold;
+  border: none;
+  color: #fff;
+  margin: 2em;
+  min-width: 200px;
+}
+
+[type="submit"] {
+  width: 2.5em;
+  min-width: 100px;
+  padding: .45em;
+  font-size: 1.3em;
+  vertical-align: middle;
+}
+
+button:active,
+[type="submit"]:active {
+  box-shadow: none !important;
+  transform: translateY(4px);
+}
