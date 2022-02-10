@@ -36,6 +36,7 @@ type Cli struct {
 type User struct {
 	Name  string
 	Money int
+	Pos   int
 	Id    string
 }
 
@@ -156,12 +157,26 @@ func (c *Cli) ReadWs() {
 				Name:  s["as"],
 				Money: 1500,
 				Id:    r,
+				Pos:   0,
 			})
 			gs[s["id"]] = l
 			c.id = r
 			c.game = s["id"]
 
-			c.co.WriteMessage(websocket.TextMessage, []byte(r))
+			c.co.WriteJSON(map[string]string{"S": "id", "Id": c.id})
+			c.co.WriteJSON(struct {
+				S    string
+				Data []User
+			}{S: "data", Data: gs[c.game].Players})
 		}
 	}
+}
+
+func GetPlayerById(s string, g Game) User {
+	var j User
+	for _, v := range g.Players {
+		j = v
+		break
+	}
+	return j
 }
