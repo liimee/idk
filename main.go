@@ -51,6 +51,8 @@ var dev = os.Getenv("DEV") == "y"
 
 var gs = map[string]Game{}
 
+var hu *H
+
 func main() {
 	e := mux.NewRouter()
 
@@ -65,7 +67,7 @@ func main() {
 		w.Write([]byte(b))
 	})
 
-	hu := &H{
+	hu = &H{
 		bc:    make(chan []byte),
 		reg:   make(chan *Cli),
 		unreg: make(chan *Cli),
@@ -110,7 +112,7 @@ func Ws(hu *H, w http.ResponseWriter, h *http.Request) {
 
 	c, _ := s.Upgrade(w, h, nil)
 
-	client := &Cli{n: hu, co: c, send: make(chan []byte, 256)}
+	client := &Cli{n: hu, co: c, send: make(chan []byte, 256), id: "", game: ""}
 	client.n.reg <- client
 
 	go client.ReadWs()
@@ -139,6 +141,16 @@ func (c *Cli) ReadWs() {
 	for {
 		_, m, err := c.co.ReadMessage()
 		if err != nil {
+			if c.game != "" {
+				d := gs[c.game]
+				d.Players = RemovePlayer(c.game, c.id)
+				gs[c.game] = d
+				br, _ := json.Marshal(struct {
+					S    string
+					Data []User
+				}{S: "data", Data: gs[c.game].Players})
+				gs[c.game].BcGame(br)
+			}
 			break
 		}
 
@@ -164,10 +176,11 @@ func (c *Cli) ReadWs() {
 			c.game = s["id"]
 
 			c.co.WriteJSON(map[string]string{"S": "id", "Id": c.id})
-			c.co.WriteJSON(struct {
+			br, _ := json.Marshal(struct {
 				S    string
 				Data []User
 			}{S: "data", Data: gs[c.game].Players})
+			gs[c.game].BcGame(br)
 		}
 	}
 }
@@ -179,4 +192,30 @@ func GetPlayerById(s string, g Game) User {
 		break
 	}
 	return j
+}
+
+func GetClisById(s string) *Cli {
+	var n *Cli
+	for f := range hu.clis {
+		if f.id == s {
+			n = f
+		}
+	}
+	return n
+}
+
+func (g Game) BcGame(d []byte) {
+	for _, f := range g.Players {
+		GetClisById(f.Id).co.WriteMessage(websocket.TextMessage, d)
+	}
+}
+
+func RemovePlayer(s string, d string) []User {
+	n := gs[s].Players
+	for k, f := range gs[s].Players {
+		if f.Id == d {
+			n = append(n[:k], n[k+1:]...)
+		}
+	}
+	return n
 }
