@@ -11,6 +11,9 @@
     <div class="center">You currently have
       <div style="font-size: 1.6em; font-weight: bold">${{(da.find(v => v.Id === id)||{Money: 0}).Money}}</div>
     </div>
+    <div v-if="!start">
+      <button class="b" @click="st">Start Game</button>
+    </div>
   </div>
   </div>
 </template>
@@ -36,17 +39,19 @@
 </style>
 
 <script lang="ts">
+let s: WebSocket;
 export default {
   data() {
     return {
       id: '',
-      da: []
+      da: [],
+      start: false
     }
   },
   mounted() {
     const id = this.$route.params.id;
-    const s = new WebSocket((import.meta.env.VITE_API||'').replace(/https?/, 'ws')+'/api/ws')
-    s.addEventListener('open', function (event) {
+    s = new WebSocket((import.meta.env.VITE_API||'').replace(/https?/, 'ws')+'/api/ws')
+    s.addEventListener('open', function () {
       s.send(JSON.stringify({
         s: 'join',
         as: 'name',
@@ -62,8 +67,21 @@ export default {
         break;
         case 'data':
         this.da = ws.Data
+        break;
+        case 'start':
+        this.start = ws.Start
       }
     })
+  },
+  unmounted() {
+    s.close();
+  },
+  methods: {
+    st() {
+      s.send(JSON.stringify({
+        s: 'start'
+      }))
+    }
   }
 }
 </script>

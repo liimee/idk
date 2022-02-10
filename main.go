@@ -42,6 +42,7 @@ type User struct {
 
 type Game struct {
 	Players []User
+	Start   bool
 }
 
 //go:embed build/*
@@ -92,7 +93,7 @@ func main() {
 func New(w http.ResponseWriter, h *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", os.Getenv("CL"))
 	id := GetRandom()
-	gs[id] = Game{Players: []User{}}
+	gs[id] = Game{Players: []User{}, Start: false}
 	m, _ := json.Marshal(map[string]string{"id": id})
 	w.Write([]byte(m))
 }
@@ -151,20 +152,21 @@ func (c *Cli) ReadWs() {
 				}{S: "data", Data: gs[c.game].Players})
 				gs[c.game].BcGame(br)
 			}
+			hu.unreg <- c
 			break
 		}
 
 		var s map[string]string
 		json.Unmarshal(m, &s)
 
-		if _, s := gs[s["id"]]; !s {
-			panic("No.")
-			//some error message via ws
-		}
-
 		if s["s"] == "join" {
 			r := GetRandom()
 			l := gs[s["id"]]
+			if l.Start {
+				c.co.Close()
+				hu.unreg <- c
+				return
+			}
 			l.Players = append(gs[s["id"]].Players, User{
 				Name:  s["as"],
 				Money: 1500,
@@ -181,6 +183,17 @@ func (c *Cli) ReadWs() {
 				Data []User
 			}{S: "data", Data: gs[c.game].Players})
 			gs[c.game].BcGame(br)
+		} else if s["s"] == "start" {
+			n := gs[c.game]
+			n.Start = true
+			gs[c.game] = n
+
+			mr, _ := json.Marshal(struct {
+				S     string
+				Start bool
+			}{S: "start", Start: gs[c.game].Start})
+
+			gs[c.game].BcGame(mr)
 		}
 	}
 }
