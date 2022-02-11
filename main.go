@@ -40,6 +40,7 @@ type User struct {
 	Money int
 	Pos   int
 	Id    string
+	Owns  []int
 }
 
 type Game struct {
@@ -175,6 +176,7 @@ func (c *Cli) ReadWs() {
 				Money: 1500,
 				Id:    r,
 				Pos:   0,
+				Owns:  []int{},
 			})
 			gs[s["id"]] = l
 			c.id = r
@@ -229,6 +231,25 @@ func (c *Cli) ReadWs() {
 			gs[c.game] = n
 
 			Turn(c.game)
+		} else if s["s"] == "buy" {
+			if c.id != gs[c.game].Turn {
+				return
+			}
+
+			//TODO: check
+
+			s := gs[c.game]
+			m := s.Players[GetIndexById(c.id, s)]
+			m.Owns = append(m.Owns, m.Pos)
+			m.Money -= board.Board[m.Pos].Price
+			s.Players[GetIndexById(c.id, s)] = m
+			gs[c.game] = s
+
+			br, _ := json.Marshal(struct {
+				S    string
+				Data []User
+			}{S: "data", Data: gs[c.game].Players})
+			gs[c.game].BcGame(br)
 		}
 	}
 }

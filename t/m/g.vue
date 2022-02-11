@@ -17,6 +17,7 @@
     <div v-if="mt">
       <button v-if="!rolled" class="a" @click="roll">Roll</button>
       <button v-if="rolled" class="b" @click="endTurn">End Turn</button>
+      <button v-if="mt && rolled && da.every(v => !v.Owns.includes(da.find(v => v.Id === id).Pos))" class="a" @click="buy">Buy</button>
     </div>
   </div>
   </div>
@@ -102,6 +103,11 @@ export default {
       this.rolled = false;
       s.send(JSON.stringify({
         s: 'endturn'
+      }))
+    },
+    buy() {
+      s.send(JSON.stringify({
+        s: 'buy'
       }))
     }
   }
