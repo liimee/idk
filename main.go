@@ -201,6 +201,10 @@ func (c *Cli) ReadWs() {
 
 			Turn(c.game)
 		} else if s["s"] == "roll" {
+			if c.id != gs[c.game].Turn {
+				return
+			}
+
 			g := gs[c.game]
 			random.Seed(time.Now().UnixNano())
 			g.Players[GetIndexById(g.Turn, g)].Pos += random.Intn(6)
@@ -212,7 +216,9 @@ func (c *Cli) ReadWs() {
 			}{S: "data", Data: gs[c.game].Players})
 			gs[c.game].BcGame(br)
 		} else if s["s"] == "endturn" {
-			//TODO: check
+			if c.id != gs[c.game].Turn {
+				return
+			}
 
 			n := gs[c.game]
 			d := GetIndexById(n.Turn, n) + 1
