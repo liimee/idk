@@ -29,7 +29,7 @@
     <div v-if="bid.bid">
       The highest bid is currently <b>${{bid.bidd}}</b>
       <form @submit="sendBid" v-if="!bid.pa.includes(id)">
-        <input type="number" v-model="bid.mybidd" :min="bid.bidd+1">
+        <input type="number" v-model="bid.mybidd" :min="bid.bidd+1" :max="da.find(v => v.Id === id).Money">
         <input type="submit" value="OK" class="b">
       </form>
       <button class="a" :disabled="bid.pa.includes(id)" @click="pas">Pass</button>

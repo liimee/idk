@@ -296,7 +296,7 @@ func (c *Cli) ReadWs() {
 				var s map[string]interface{}
 				json.Unmarshal(m, &s)
 				f := gs[c.game]
-				if s["bid"].(float64) > gs[c.game].Bid {
+				if s["bid"].(float64) > gs[c.game].Bid && s["bid"].(float64) <= float64(GetPlayerById(c.id, f).Money) {
 					f.Bid = s["bid"].(float64)
 					f.Bidd = GetPlayerById(c.id, f)
 					f.Biddd = []string{}
