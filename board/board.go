@@ -31,7 +31,7 @@ var Board = []Sq{
 	Sq{Name: "Hmm(os) Road", Price: 60, Rent: []int{2, 10, 30, 90, 160, 250}, Set: 1}.def(),
 	CommunityChest,
 	Sq{Name: "Well yes but actually no Road", Price: 60, Rent: []int{4, 20, 60, 180, 360, 450}, Set: 1}.def(),
-	Sq{Name: "Tax"}.nop(),
+	Sq{Name: "Tax", Price: 100}.nop(),
 	Sq{Name: "This is a Station", Price: 200, Rent: []int{100}, Set: 0}.def(),
 	Sq{Name: "Not The Angel Islington", Price: 100, Rent: []int{6, 30, 90, 270, 400, 550}, Set: 2}.def(),
 	Chance,
@@ -65,6 +65,6 @@ var Board = []Sq{
 	Sq{Name: "I honestly don't know Station", Price: 200, Rent: []int{100}, Set: 0}.def(),
 	Chance,
 	Sq{Name: "Yes we're almost done!!!!", Price: 350, Rent: []int{35, 175, 500, 1100, 1300, 1500}, Set: 8}.def(),
-	Sq{Name: "Tax(i)"}.nop(),
+	Sq{Name: "Tax(i)", Price: 200}.nop(),
 	Sq{Name: "Undardese Electartica", Price: 400, Rent: []int{50, 200, 600, 1400, 1700, 2000}, Set: 8}.def(),
 }

@@ -209,10 +209,13 @@ func (c *Cli) ReadWs() {
 
 			g := gs[c.game]
 			random.Seed(time.Now().UnixNano())
-			g.Players[GetIndexById(g.Turn, g)].Pos += random.Intn(6)
+			g.Players[GetIndexById(g.Turn, g)].Pos += (random.Intn(5) + 1)
 			if g.Players[GetIndexById(g.Turn, g)].Pos > 39 {
 				g.Players[GetIndexById(g.Turn, g)].Pos -= 39
 				g.Players[GetIndexById(g.Turn, g)].Money += 200
+			}
+			if board.Board[g.Players[GetIndexById(g.Turn, g)].Pos].Name == "Tax" || board.Board[g.Players[GetIndexById(g.Turn, g)].Pos].Name == "Tax(i)" {
+				g.Players[GetIndexById(g.Turn, g)].Money -= board.Board[g.Players[GetIndexById(g.Turn, g)].Pos].Price
 			}
 			gs[c.game] = g
 
