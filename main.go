@@ -208,14 +208,19 @@ func (c *Cli) ReadWs() {
 			}
 
 			g := gs[c.game]
+			ss := &g.Players[GetIndexById(g.Turn, g)]
 			random.Seed(time.Now().UnixNano())
-			g.Players[GetIndexById(g.Turn, g)].Pos += (random.Intn(5) + 1)
-			if g.Players[GetIndexById(g.Turn, g)].Pos > 39 {
-				g.Players[GetIndexById(g.Turn, g)].Pos -= 39
-				g.Players[GetIndexById(g.Turn, g)].Money += 200
+			ss.Pos += (random.Intn(5) + 1)
+			if ss.Pos > 39 {
+				ss.Pos -= 39
+				ss.Money += 200
 			}
-			if board.Board[g.Players[GetIndexById(g.Turn, g)].Pos].Name == "Tax" || board.Board[g.Players[GetIndexById(g.Turn, g)].Pos].Name == "Tax(i)" {
-				g.Players[GetIndexById(g.Turn, g)].Money -= board.Board[g.Players[GetIndexById(g.Turn, g)].Pos].Price
+			if board.Board[ss.Pos].Name == "Tax" || board.Board[ss.Pos].Name == "Tax(i)" {
+				ss.Money -= board.Board[ss.Pos].Price
+			}
+			if WhoOwnsIt(c.game, ss.Pos) != c.id && WhoOwnsIt(c.game, ss.Pos) != "" {
+				ss.Money -= board.Board[ss.Pos].Rent[0] // "0"
+				gs[c.game].Players[GetIndexById(WhoOwnsIt(c.game, ss.Pos), gs[c.game])].Money += board.Board[ss.Pos].Rent[0]
 			}
 			gs[c.game] = g
 
@@ -303,6 +308,19 @@ func (g Game) BcGame(d []byte) {
 	for _, f := range g.Players {
 		GetClisById(f.Id).co.WriteMessage(websocket.TextMessage, d)
 	}
+}
+
+func WhoOwnsIt(g string, n int) string {
+	var f string
+	for _, s := range gs[g].Players {
+		for _, j := range s.Owns {
+			if n == j {
+				f = s.Id
+				break
+			}
+		}
+	}
+	return f
 }
 
 func RemovePlayer(s string, d string) []User {
