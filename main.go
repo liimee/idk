@@ -210,6 +210,10 @@ func (c *Cli) ReadWs() {
 			g := gs[c.game]
 			random.Seed(time.Now().UnixNano())
 			g.Players[GetIndexById(g.Turn, g)].Pos += random.Intn(6)
+			if g.Players[GetIndexById(g.Turn, g)].Pos > 39 {
+				g.Players[GetIndexById(g.Turn, g)].Pos -= 39
+				g.Players[GetIndexById(g.Turn, g)].Money += 200
+			}
 			gs[c.game] = g
 
 			br, _ := json.Marshal(struct {

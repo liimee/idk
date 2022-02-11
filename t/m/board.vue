@@ -6,7 +6,7 @@
         <div>{{s.Name}}</div>
         <div>{{['Chance', 'Community Chest', 'IN JAIL', 'Free Parking', 'Go to Jail :)'].includes(s.Name) ? '' : '$'+s.Price}}</div>
         <div>
-          <span class="player" v-for="(s, x) in dt.filter(v => v.Pos === i && Math.floor(v.Pos / 11) === x)" :key="x">{{s.Name}}</span>
+          <span class="player" v-for="(s, x) in dt.filter(v => v.Pos === (x*10)+i && Math.floor(v.Pos / 10) === x)" :key="x">{{s.Name}}</span>
         </div>
       </div>
     </div>

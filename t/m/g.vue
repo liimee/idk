@@ -74,6 +74,7 @@ export default {
         break;
         case 'data':
         this.da = ws.Data
+        console.log(ws.Data)
         break;
         case 'start':
         this.start = ws.Start
