@@ -3,7 +3,14 @@
 </script>
 
 <template>
-  <div class="parent">
+  <div v-if="!str">
+    <form @submit="join">
+    <label for="joinas">Join as...</label>
+    <input type="text" placeholder="Hm?" id="joinas" v-model="as" required>
+    <input type="submit" class="a" value="Join">
+  </form>
+  </div>
+  <div class="parent" v-if="str">
   <div class="board" style="">
     <Board :dt="da" />
   </div>
@@ -41,6 +48,28 @@
   .center {
     text-align: center;
   }
+
+  form {
+  text-align: center;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+input[type="text"] {
+  padding: .4em;
+  border-radius: 6px;
+  border: solid 2px #000;
+  font-size: 1.3em;
+}
+
+label, input {
+  margin: .3em;
+  vertical-align: middle;
+}
 </style>
 
 <script lang="ts">
@@ -48,6 +77,8 @@ let s: WebSocket;
 export default {
   data() {
     return {
+      as: '',
+      str: false,
       id: '',
       da: [],
       start: false,
@@ -55,14 +86,21 @@ export default {
       rolled: false
     }
   },
-  mounted() {
-    const id = this.$route.params.id;
+  unmounted() {
+    s.close();
+  },
+  methods: {
+    join(e: Event) {
+      e.preventDefault()
+      const {as} = this;
+      this.str = true;
+      const id = this.$route.params.id;
     s = new WebSocket((import.meta.env.VITE_API||'').replace(/https?/, 'ws')+'/api/ws')
     s.addEventListener('open', function () {
       s.send(JSON.stringify({
         s: 'join',
-        as: 'name',
-        id: id
+        as,
+        id
       }));
     });
 
@@ -82,11 +120,7 @@ export default {
         this.mt = true;
       }
     })
-  },
-  unmounted() {
-    s.close();
-  },
-  methods: {
+    },
     st() {
       s.send(JSON.stringify({
         s: 'start'
