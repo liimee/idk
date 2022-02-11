@@ -10,6 +10,8 @@ import (
 	random "math/rand"
 	"net/http"
 	"os"
+	"path"
+	"path/filepath"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -61,10 +63,6 @@ var hu *H
 func main() {
 	e := mux.NewRouter()
 
-	if !dev {
-		e.PathPrefix("/").HandlerFunc(fe)
-	}
-
 	e.Path("/api/new").Methods("POST").HandlerFunc(New)
 	e.Path("/api/board").Methods("GET").HandlerFunc(func(w http.ResponseWriter, h *http.Request) {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
@@ -86,6 +84,10 @@ func main() {
 	s := ":3000"
 	if dev {
 		s = ":4000"
+	}
+
+	if !dev {
+		e.PathPrefix("/").HandlerFunc(fe)
 	}
 
 	fmt.Println("running")
@@ -125,6 +127,13 @@ func Ws(hu *H, w http.ResponseWriter, h *http.Request) {
 
 func fe(w http.ResponseWriter, r *http.Request) {
 	s, _ := fs.Sub(f, "build")
+	d, _ := filepath.Abs(r.URL.Path)
+	_, er := fs.Stat(f, path.Join("build", d))
+	if os.IsNotExist(er) {
+		g, _ := f.ReadFile("build/index.html")
+		w.Write(g)
+		return
+	}
 	http.FileServer(http.FS(s)).ServeHTTP(w, r)
 }
 
