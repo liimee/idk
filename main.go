@@ -215,9 +215,6 @@ func (c *Cli) ReadWs() {
 				ss.Pos -= 39
 				ss.Money += 200
 			}
-			if board.Board[ss.Pos].Name == "Tax" || board.Board[ss.Pos].Name == "Tax(i)" {
-				ss.Money -= board.Board[ss.Pos].Price
-			}
 			if WhoOwnsIt(c.game, ss.Pos) != c.id && WhoOwnsIt(c.game, ss.Pos) != "" {
 				ss.Money -= board.Board[ss.Pos].Rent[0] // "0"
 				gs[c.game].Players[GetIndexById(WhoOwnsIt(c.game, ss.Pos), gs[c.game])].Money += board.Board[ss.Pos].Rent[0]
