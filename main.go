@@ -7,8 +7,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/fs"
+	random "math/rand"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -43,6 +45,7 @@ type User struct {
 type Game struct {
 	Players []User
 	Start   bool
+	Turn    string
 }
 
 //go:embed build/*
@@ -93,7 +96,7 @@ func main() {
 func New(w http.ResponseWriter, h *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", os.Getenv("CL"))
 	id := GetRandom()
-	gs[id] = Game{Players: []User{}, Start: false}
+	gs[id] = Game{Players: []User{}, Start: false, Turn: ""}
 	m, _ := json.Marshal(map[string]string{"id": id})
 	w.Write([]byte(m))
 }
@@ -186,6 +189,7 @@ func (c *Cli) ReadWs() {
 		} else if s["s"] == "start" {
 			n := gs[c.game]
 			n.Start = true
+			n.Turn = gs[c.game].Players[0].Id
 			gs[c.game] = n
 
 			mr, _ := json.Marshal(struct {
@@ -194,15 +198,59 @@ func (c *Cli) ReadWs() {
 			}{S: "start", Start: gs[c.game].Start})
 
 			gs[c.game].BcGame(mr)
+
+			Turn(c.game)
+		} else if s["s"] == "roll" {
+			g := gs[c.game]
+			random.Seed(time.Now().UnixNano())
+			g.Players[GetIndexById(g.Turn, g)].Pos += random.Intn(6)
+			gs[c.game] = g
+
+			br, _ := json.Marshal(struct {
+				S    string
+				Data []User
+			}{S: "data", Data: gs[c.game].Players})
+			gs[c.game].BcGame(br)
+		} else if s["s"] == "endturn" {
+			//TODO: check
+
+			n := gs[c.game]
+			d := GetIndexById(n.Turn, n) + 1
+			if d >= len(n.Players) {
+				d = 0
+			}
+			n.Turn = n.Players[d].Id
+			gs[c.game] = n
+
+			Turn(c.game)
 		}
 	}
+}
+
+func Turn(g string) {
+	GetClisById(gs[g].Turn).co.WriteJSON(map[string]string{
+		"S": "turn",
+	})
 }
 
 func GetPlayerById(s string, g Game) User {
 	var j User
 	for _, v := range g.Players {
-		j = v
-		break
+		if v.Id == s {
+			j = v
+			break
+		}
+	}
+	return j
+}
+
+func GetIndexById(s string, g Game) int {
+	var j int
+	for v, d := range g.Players {
+		if d.Id == s {
+			j = v
+			break
+		}
 	}
 	return j
 }

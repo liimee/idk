@@ -14,6 +14,10 @@
     <div v-if="!start">
       <button class="b" @click="st">Start Game</button>
     </div>
+    <div v-if="mt">
+      <button v-if="!rolled" class="a" @click="roll">Roll</button>
+      <button v-if="rolled" class="b" @click="endTurn">End Turn</button>
+    </div>
   </div>
   </div>
 </template>
@@ -45,7 +49,9 @@ export default {
     return {
       id: '',
       da: [],
-      start: false
+      start: false,
+      mt: false,
+      rolled: false
     }
   },
   mounted() {
@@ -70,6 +76,9 @@ export default {
         break;
         case 'start':
         this.start = ws.Start
+        break;
+        case 'turn':
+        this.mt = true;
       }
     })
   },
@@ -80,6 +89,19 @@ export default {
     st() {
       s.send(JSON.stringify({
         s: 'start'
+      }))
+    },
+    roll() {
+      this.rolled = true;
+      s.send(JSON.stringify({
+        s: 'roll'
+      }))
+    },
+    endTurn() {
+      this.mt = false;
+      this.rolled = false;
+      s.send(JSON.stringify({
+        s: 'endturn'
       }))
     }
   }
