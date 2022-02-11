@@ -26,6 +26,14 @@
       <button v-if="rolled" class="b" @click="endTurn">End Turn</button>
       <button v-if="mt && rolled && da.every(v => !v.Owns.includes(da.find(v => v.Id === id).Pos))" class="a" @click="buy">Buy</button>
     </div>
+    <div v-if="bid.bid">
+      The highest bid is currently <b>${{bid.bidd}}</b>
+      <form @submit="sendBid" v-if="!bid.pa.includes(id)">
+        <input type="number" v-model="bid.mybidd" :min="bid.bidd+1">
+        <input type="submit" value="OK" class="b">
+      </form>
+      <button class="a" :disabled="bid.pa.includes(id)" @click="pas">Pass</button>
+    </div>
   </div>
   </div>
 </template>
@@ -59,7 +67,8 @@ label {
   font-size: 1.1em;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="number"] {
   padding: .4em;
   border-radius: 6px;
   border: solid 2px #000;
@@ -69,6 +78,11 @@ input[type="text"] {
 label, input {
   margin: .3em;
   vertical-align: middle;
+}
+
+button:disabled {
+  background-color: rgb(97, 97, 97);
+  box-shadow: 0 4px rgb(44, 44, 44);
 }
 </style>
 
@@ -83,7 +97,13 @@ export default {
       da: [],
       start: false,
       mt: false,
-      rolled: false
+      rolled: false,
+      bid: {
+        bid: false,
+        bidd: 0,
+        mybidd: 0,
+        pa: []
+      }
     }
   },
   unmounted() {
@@ -118,6 +138,12 @@ export default {
         break;
         case 'turn':
         this.mt = true;
+        break;
+        case 'bid':
+        this.bid.pa = ws.Pa
+        this.bid.bidd = ws.Bid
+        this.bid.bid = ws.Biddi
+        console.log(ws)
       }
     })
     },
@@ -142,6 +168,19 @@ export default {
     buy() {
       s.send(JSON.stringify({
         s: 'buy'
+      }))
+    },
+    sendBid(e: Event) {
+      e.preventDefault();
+      s.send(JSON.stringify({
+        s: "bid",
+        bid: this.bid.mybidd
+      }))
+      this.bid.mybidd = 0;
+    },
+    pas() {
+      s.send(JSON.stringify({
+        s: 'pass'
       }))
     }
   }

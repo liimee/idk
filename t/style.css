@@ -40,7 +40,7 @@ button, [type="submit"] {
   vertical-align: middle;
 }
 
-button:active,
+button:active:not(:disabled),
 [type="submit"]:active {
   box-shadow: none !important;
   transform: translateY(4px);

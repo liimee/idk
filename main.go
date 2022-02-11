@@ -49,6 +49,12 @@ type Game struct {
 	Players []User
 	Start   bool
 	Turn    string
+
+	Bid    float64
+	Bidd   User
+	Biddi  bool
+	Biddd  []string
+	BidPos int
 }
 
 //go:embed build/*
@@ -99,7 +105,7 @@ func main() {
 func New(w http.ResponseWriter, h *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", os.Getenv("CL"))
 	id := GetRandom()
-	gs[id] = Game{Players: []User{}, Start: false, Turn: ""}
+	gs[id] = Game{Players: []User{}, Start: false, Turn: "", Bid: 0, Bidd: User{}, Biddi: false, Biddd: []string{}, BidPos: 0}
 	m, _ := json.Marshal(map[string]string{"id": id})
 	w.Write([]byte(m))
 }
@@ -241,14 +247,31 @@ func (c *Cli) ReadWs() {
 			}
 
 			n := gs[c.game]
-			d := GetIndexById(n.Turn, n) + 1
-			if d >= len(n.Players) {
-				d = 0
-			}
-			n.Turn = n.Players[d].Id
-			gs[c.game] = n
 
-			Turn(c.game)
+			if WhoOwnsIt(c.game, GetPlayerById(c.id, n).Pos) == "" && board.Board[GetPlayerById(c.id, n).Pos].Price > 0 {
+				n.Bid = 0
+				n.Bidd = User{}
+				n.Biddi = true
+				n.BidPos = GetPlayerById(c.id, n).Pos
+				s, _ := json.Marshal(map[string]interface{}{
+					"S":     "bid",
+					"Bid":   n.Bid,
+					"Biddi": n.Biddi,
+					"Pa":    n.Biddd,
+				})
+				gs[c.game].BcGame(s)
+				gs[c.game] = n
+			} else {
+				d := GetIndexById(n.Turn, n) + 1
+				if d >= len(n.Players) {
+					d = 0
+				}
+				n.Turn = n.Players[d].Id
+				gs[c.game] = n
+
+				Turn(c.game)
+				break
+			}
 		} else if s["s"] == "buy" {
 			if c.id != gs[c.game].Turn {
 				return
@@ -262,6 +285,68 @@ func (c *Cli) ReadWs() {
 			m.Money -= board.Board[m.Pos].Price
 			s.Players[GetIndexById(c.id, s)] = m
 			gs[c.game] = s
+
+			br, _ := json.Marshal(struct {
+				S    string
+				Data []User
+			}{S: "data", Data: gs[c.game].Players})
+			gs[c.game].BcGame(br)
+		} else if s["s"] == "bid" {
+			if gs[c.game].Biddi {
+				var s map[string]interface{}
+				json.Unmarshal(m, &s)
+				f := gs[c.game]
+				if s["bid"].(float64) > gs[c.game].Bid {
+					f.Bid = s["bid"].(float64)
+					f.Bidd = GetPlayerById(c.id, f)
+					f.Biddd = []string{}
+					gs[c.game] = f
+
+					s, _ := json.Marshal(map[string]interface{}{
+						"S":     "bid",
+						"Bid":   f.Bid,
+						"Biddi": f.Biddi,
+						"Pa":    f.Biddd,
+					})
+					gs[c.game].BcGame(s)
+				}
+			}
+		} else if s["s"] == "pass" {
+			f := gs[c.game]
+			f.Biddd = append(f.Biddd, c.id)
+
+			if len(f.Biddd) == len(f.Players) {
+				if f.Bid > 0 {
+					mmm := f.Players[GetIndexById(f.Bidd.Id, f)]
+					mmm.Money -= int(f.Bid)
+					mmm.Owns = append(mmm.Owns, f.BidPos)
+					f.Players[GetIndexById(f.Bidd.Id, f)] = mmm
+				}
+
+				f.Bid = 0
+				f.Bidd = User{}
+				f.Biddd = []string{}
+				f.Biddi = false
+
+				d := GetIndexById(f.Turn, f) + 1
+				if d >= len(f.Players) {
+					d = 0
+				}
+				f.Turn = f.Players[d].Id
+				gs[c.game] = f
+
+				Turn(c.game)
+			}
+
+			gs[c.game] = f
+
+			s, _ := json.Marshal(map[string]interface{}{
+				"S":     "bid",
+				"Bid":   f.Bid,
+				"Biddi": f.Biddi,
+				"Pa":    f.Biddd,
+			})
+			gs[c.game].BcGame(s)
 
 			br, _ := json.Marshal(struct {
 				S    string
