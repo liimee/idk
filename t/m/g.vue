@@ -126,17 +126,15 @@ export default {
   methods: {
     join(e: Event) {
       e.preventDefault()
-      const {as} = this;
       this.str = true;
-      const id = this.$route.params.id;
-    s = new WebSocket((import.meta.env.VITE_API||'').replace(/https?/, 'ws')+'/api/ws')
-    s.addEventListener('open', function () {
-      s.send(JSON.stringify({
-        s: 'join',
-        as,
-        id
-      }));
-    });
+      s = new WebSocket((import.meta.env.VITE_API||'').replace(/https?/, 'ws')+'/api/ws')
+      s.addEventListener('open', () => {
+        s.send(JSON.stringify({
+          s: 'join',
+          as: this.as,
+          id: this.$route.params.id
+        }));
+      });
 
     s.addEventListener('message', s => {
       const ws = JSON.parse(s.data)
