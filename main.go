@@ -182,6 +182,10 @@ func (c *Cli) ReadWs() {
 			r := GetRandom()
 			l := gs[s["id"]]
 			if l.Start {
+				c.co.WriteJSON(map[string]string{
+					"S": "err",
+					"E": "The game has started",
+				})
 				c.co.Close()
 				hu.unreg <- c
 				return

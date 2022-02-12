@@ -36,6 +36,7 @@
     </div>
   </div>
   </div>
+  <div v-if="err.e" class="er">{{err.m}}</div>
 </template>
 
 <style scoped>
@@ -84,6 +85,15 @@ button:disabled {
   background-color: rgb(97, 97, 97);
   box-shadow: 0 4px rgb(44, 44, 44);
 }
+
+.er {
+  background-color: rgb(255, 182, 182);
+  color: #f83c48;
+  padding: 1em;
+  border-radius: 6px;
+  margin: 1em;
+  font-weight: bold;
+}
 </style>
 
 <script lang="ts">
@@ -103,6 +113,10 @@ export default {
         bidd: 0,
         mybidd: 0,
         pa: []
+      },
+      err: {
+        e: false,
+        m: ''
       }
     }
   },
@@ -143,7 +157,12 @@ export default {
         this.bid.pa = ws.Pa
         this.bid.bidd = ws.Bid
         this.bid.bid = ws.Biddi
-        console.log(ws)
+        break;
+        case 'err':
+        this.err = {
+          e: true,
+          m: ws.E
+        }
       }
     })
     },
