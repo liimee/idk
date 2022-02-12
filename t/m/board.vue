@@ -1,6 +1,6 @@
 <template>
   <p v-if="err">Cannot load board!</p>
-  <div id="board">
+  <div id="board" ref="s">
     <div class="row" :data-row="x" :key="x" v-for="(_, x) in 4">
       <div class="c" v-for="(s, i) in board.filter((_, e) => Math.floor(e / 10) == x)" :key="i" >
         <div>{{s.Name}}</div>
@@ -96,6 +96,11 @@ export default {
     }).then(v => {
       this.board = v
     })
+  },
+  methods: {
+    scr(g: number) {
+      (this.$refs.s as HTMLElement).children[Math.floor(g / 10)].children[g-(Math.floor(g / 10)*10)].scrollIntoView()
+    }
   }
 }
 </script>

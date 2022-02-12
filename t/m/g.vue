@@ -12,7 +12,7 @@
   </div>
   <div class="parent" v-if="str">
   <div class="board" style="">
-    <Board :dt="da" />
+    <Board :dt="da" ref="board" />
   </div>
   <div style="padding: 1em">
     <div class="center">You currently have
@@ -146,6 +146,10 @@ export default {
         break;
         case 'data':
         this.da = ws.Data
+        if(this.mt) {
+          // @ts-ignore
+          this.$refs.board.scr(this.da.find(v => v.Id === this.id).Pos)
+        }
         break;
         case 'start':
         this.start = ws.Start
