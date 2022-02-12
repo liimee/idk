@@ -274,7 +274,6 @@ func (c *Cli) ReadWs() {
 				gs[c.game] = n
 
 				Turn(c.game)
-				break
 			}
 		} else if s["s"] == "buy" {
 			if c.id != gs[c.game].Turn {
