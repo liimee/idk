@@ -227,7 +227,7 @@ func (c *Cli) ReadWs() {
 			random.Seed(time.Now().UnixNano())
 			ss.Pos += (random.Intn(5) + 1)
 			if ss.Pos > 39 {
-				ss.Pos -= 39
+				ss.Pos -= 40
 				ss.Money += 200
 			}
 			if WhoOwnsIt(c.game, ss.Pos) != c.id && WhoOwnsIt(c.game, ss.Pos) != "" {
