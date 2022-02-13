@@ -46,6 +46,7 @@
 <style scoped>
   .board {
     width: 45vw;
+    height: calc(100vh - 4em);
     overflow: auto;
     white-space: nowrap;
     padding: 1em;
