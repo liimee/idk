@@ -239,7 +239,6 @@ func (c *Cli) ReadWs() {
 			if ss.Pos == 30 {
 				ss.Pos = 10
 				ss.InJail = true
-				return
 			}
 			if WhoOwnsIt(c.game, ss.Pos) != c.id && WhoOwnsIt(c.game, ss.Pos) != "" {
 				ss.Money -= board.Board[ss.Pos].Rent[0] // "0"
