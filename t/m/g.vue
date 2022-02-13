@@ -28,8 +28,8 @@
       <button v-if="da.find(v => v.Id === id).InJail" class="b" @click="payJail">Pay $50 to get out of Jail</button>
     </div>
     <div v-if="bid.bid">
+      The highest bid is currently <b>${{bid.bidd}}</b>
       <form @submit="sendBid" v-if="!bid.pa.includes(id)">
-        The highest bid is currently <b>${{bid.bidd}}</b>
         <input type="number" v-model="bid.mybidd" :min="bid.bidd+1" step="1" :max="da.find(v => v.Id === id).Money">
         <input type="submit" value="OK" class="b">
       </form>
