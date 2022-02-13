@@ -33,6 +33,10 @@
         <input type="submit" value="OK" class="b">
       </form>
       <button class="a" :disabled="bid.pa.includes(id)" @click="pas">Pass</button>
+      <ul v-if="bid.pa.length > 0">
+        Pass:
+        <li v-for="v, s in bid.pa" :key="s">{{da.find(g => g.Id === v).Name}}</li>
+      </ul>
     </div>
   </div>
   </div>
