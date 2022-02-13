@@ -22,13 +22,14 @@
       <button class="b" @click="st">Start Game</button>
     </div>
     <div v-if="mt">
-      <button v-if="!rolled" class="a" @click="roll">Roll</button>
       <button v-if="rolled" class="b" @click="endTurn">End Turn</button>
-      <button v-if="mt && rolled && da.every(v => !v.Owns.includes(da.find(v => v.Id === id).Pos)) && $refs.board.pay(da.find(v => v.Id === id).Pos) > 0 && $refs.board.pay(da.find(v => v.Id === id).Pos) <= da.find(v => v.Id === id).Money" class="a" @click="buy">Buy</button>
+      <button v-if="mt && rolled && da.every(v => !v.Owns.includes(da.find(v => v.Id === id).Pos)) && $refs.board.pay(da.find(v => v.Id === id).Pos) > 0 && $refs.board.pay(da.find(v => v.Id === id).Pos) <= da.find(v => v.Id === id).Money && !da.find(v => v.Id === id).InJail" class="a" @click="buy">Buy</button>
+      <button v-if="!rolled && !da.find(v => v.Id === id).InJail" class="a" @click="roll">Roll</button>
+      <button v-if="da.find(v => v.Id === id).InJail" class="b" @click="payJail">Pay $50 to get out of Jail</button>
     </div>
     <div v-if="bid.bid">
-      The highest bid is currently <b>${{bid.bidd}}</b>
       <form @submit="sendBid" v-if="!bid.pa.includes(id)">
+        The highest bid is currently <b>${{bid.bidd}}</b>
         <input type="number" v-model="bid.mybidd" :min="bid.bidd+1" step="1" :max="da.find(v => v.Id === id).Money">
         <input type="submit" value="OK" class="b">
       </form>
@@ -207,6 +208,11 @@ export default {
     pas() {
       s.send(JSON.stringify({
         s: 'pass'
+      }))
+    },
+    payJail() {
+      s.send(JSON.stringify({
+        s: 'payjail'
       }))
     }
   }
