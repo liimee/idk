@@ -238,6 +238,12 @@ func (c *Cli) ReadWs() {
 				ss.Money -= board.Board[ss.Pos].Rent[0] // "0"
 				gs[c.game].Players[GetIndexById(WhoOwnsIt(c.game, ss.Pos), gs[c.game])].Money += board.Board[ss.Pos].Rent[0]
 			}
+			if ss.Pos == 4 {
+				ss.Money -= 200
+			}
+			if ss.Pos == 38 {
+				ss.Money -= 100
+			}
 			gs[c.game] = g
 
 			br, _ := json.Marshal(struct {
