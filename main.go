@@ -282,7 +282,7 @@ func (c *Cli) ReadWs() {
 				Turn(c.game)
 			}
 		} else if s["s"] == "buy" {
-			if c.id != gs[c.game].Turn {
+			if c.id != gs[c.game].Turn || GetPlayerById(c.id, gs[c.game]).Money < board.Board[GetPlayerById(c.id, gs[c.game]).Pos].Price {
 				return
 			}
 

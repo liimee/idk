@@ -102,7 +102,7 @@ export default {
       (this.$refs.s as HTMLElement).children[Math.floor(g / 10)].children[g-(Math.floor(g / 10)*10)].scrollIntoView()
     },
     pay(g: number) {
-      return this.board[g].Price > 0
+      return this.board[g].Price
     }
   }
 }
