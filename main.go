@@ -38,11 +38,12 @@ type Cli struct {
 }
 
 type User struct {
-	Name  string
-	Money int
-	Pos   int
-	Id    string
-	Owns  []int
+	Name   string
+	Money  int
+	Pos    int
+	Id     string
+	Owns   []int
+	InJail bool
 }
 
 type Game struct {
@@ -191,11 +192,12 @@ func (c *Cli) ReadWs() {
 				return
 			}
 			l.Players = append(gs[s["id"]].Players, User{
-				Name:  s["as"],
-				Money: 1500,
-				Id:    r,
-				Pos:   0,
-				Owns:  []int{},
+				Name:   s["as"],
+				Money:  1500,
+				Id:     r,
+				Pos:    0,
+				Owns:   []int{},
+				InJail: false,
 			})
 			gs[s["id"]] = l
 			c.id = r
@@ -233,6 +235,11 @@ func (c *Cli) ReadWs() {
 			if ss.Pos > 39 {
 				ss.Pos -= 40
 				ss.Money += 200
+			}
+			if ss.Pos == 30 {
+				ss.Pos = 10
+				ss.InJail = true
+				return
 			}
 			if WhoOwnsIt(c.game, ss.Pos) != c.id && WhoOwnsIt(c.game, ss.Pos) != "" {
 				ss.Money -= board.Board[ss.Pos].Rent[0] // "0"
@@ -356,6 +363,19 @@ func (c *Cli) ReadWs() {
 				"Pa":    f.Biddd,
 			})
 			gs[c.game].BcGame(s)
+
+			br, _ := json.Marshal(struct {
+				S    string
+				Data []User
+			}{S: "data", Data: gs[c.game].Players})
+			gs[c.game].BcGame(br)
+		} else if s["s"] == "payjail" {
+			m := GetPlayerById(c.id, gs[c.game])
+			if m.Money >= 50 {
+				m.Money -= 50
+				m.InJail = false
+			}
+			gs[c.game].Players[GetIndexById(c.id, gs[c.game])] = m
 
 			br, _ := json.Marshal(struct {
 				S    string

@@ -22,9 +22,10 @@
       <button class="b" @click="st">Start Game</button>
     </div>
     <div v-if="mt">
-      <button v-if="!rolled" class="a" @click="roll">Roll</button>
-      <button v-if="rolled" class="b" @click="endTurn">End Turn</button>
-      <button v-if="mt && rolled && da.every(v => !v.Owns.includes(da.find(v => v.Id === id).Pos)) && $refs.board.pay(da.find(v => v.Id === id).Pos)" class="a" @click="buy">Buy</button>
+      <button v-if="!rolled && !da.find(v => v.Id === id).InJail" class="a" @click="roll">Roll</button>
+      <button v-if="rolled && !da.find(v => v.Id === id).InJail" class="b" @click="endTurn">End Turn</button>
+      <button v-if="mt && rolled && da.every(v => !v.Owns.includes(da.find(v => v.Id === id).Pos)) && $refs.board.pay(da.find(v => v.Id === id).Pos) && !da.find(v => v.Id === id).InJail" class="a" @click="buy">Buy</button>
+      <button v-if="da.find(v => v.Id === id).InJail" class="b" @click="payJail">Pay $50 to get out of Jail</button>
     </div>
     <div v-if="bid.bid">
       The highest bid is currently <b>${{bid.bidd}}</b>
@@ -207,6 +208,11 @@ export default {
     pas() {
       s.send(JSON.stringify({
         s: 'pass'
+      }))
+    },
+    payJail() {
+      s.send(JSON.stringify({
+        s: 'payjail'
       }))
     }
   }
