@@ -373,10 +373,8 @@ func (c *Cli) ReadWs() {
 			gs[c.game].BcGame(br)
 		} else if s["s"] == "payjail" {
 			m := GetPlayerById(c.id, gs[c.game])
-			if m.Money >= 50 {
-				m.Money -= 50
-				m.InJail = false
-			}
+			m.Money -= 50
+			m.InJail = false
 			gs[c.game].Players[GetIndexById(c.id, gs[c.game])] = m
 
 			br, _ := json.Marshal(struct {
@@ -384,6 +382,19 @@ func (c *Cli) ReadWs() {
 				Data []User
 			}{S: "data", Data: gs[c.game].Players})
 			gs[c.game].BcGame(br)
+		} else if s["s"] == "resign" {
+			d := gs[c.game]
+			d.Players = RemovePlayer(c.game, c.id)
+			gs[c.game] = d
+			br, _ := json.Marshal(struct {
+				S    string
+				Data []User
+			}{S: "data", Data: gs[c.game].Players})
+			gs[c.game].BcGame(br)
+
+			if len(gs[c.game].Players) == 1 {
+				//win?
+			}
 		}
 	}
 }
