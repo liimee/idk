@@ -6,7 +6,7 @@
   <div v-if="!str">
     <form @submit="join">
     <label for="joinas">Join as...</label>
-    <input type="text" placeholder="Gopher" id="joinas" v-model="as" required>
+    <input type="text" placeholder="Gopher" id="joinas" @input="e => as = e.target.value" required>
     <input type="submit" class="a" value="Join">
   </form>
   </div>
