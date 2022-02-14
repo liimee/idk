@@ -3,8 +3,9 @@
   <div id="board" ref="s">
     <div class="row" :data-row="x" :key="x" v-for="(_, x) in 4">
       <div class="c" v-for="(s, i) in board.filter((_, e) => Math.floor(e / 10) == x)" :key="i" >
-        <div>{{s.Name}}</div>
+        <div><b>{{s.Name}}</b></div>
         <div>{{['Chance', 'Community Chest', 'IN JAIL', 'Free Parking', 'Go to Jail :)'].includes(s.Name) ? '' : '$'+s.Price}}</div>
+        <div style="color: grey" v-if="dt.some(v => v.Owns.includes((x*10)+i))">({{dt.find(v => v.Owns.includes((x*10)+i)).Name}})</div>
         <div>
           <span class="player" v-for="(s, x) in dt.filter(v => v.Pos === (x*10)+i && Math.floor(v.Pos / 10) === x)" :key="x">{{s.Name}}</span>
         </div>
@@ -68,13 +69,18 @@
     word-break: break-all;
     padding: 1em;
     overflow: hidden;
+    text-align: center;
   }
 
   .player {
-    padding: .2em .4em;
+    padding: .2em 1em;
     border-radius: 30px;
     background-color: blue;
     color: #fff;
+  }
+
+  .c > div {
+    margin: .5em;
   }
 </style>
 
