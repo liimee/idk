@@ -51,6 +51,13 @@
         <li v-for="g, i in da" :key="i">{{g.Name}}<span style="color: grey"> − has ${{g.Money}} − owns {{g.Owns.length}} properties {{g.InJail ? '− in jail':''}}</span></li>
       </ul>
     </div>
+    <div>
+      <hr />
+      <h2>Your Properties ({{da.find(g => g.Id === id).Owns.length}})</h2>
+      <ul>
+        <li v-for="g, i in da.find(g => g.Id === id).Owns" :key="i">{{$refs.board.name(g)}}</li>
+      </ul>
+    </div>
   </div>
   </div>
   <div v-if="err.e" class="er">{{err.m}}</div>
