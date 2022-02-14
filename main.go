@@ -388,6 +388,7 @@ func (c *Cli) ReadWs() {
 			gs[c.game].BcGame(br)
 		} else if s["s"] == "resign" {
 			d := gs[c.game]
+			mm := GetIndexById(c.id, d)
 			d.Players = RemovePlayer(c.game, c.id)
 			gs[c.game] = d
 			br, _ := json.Marshal(struct {
@@ -398,6 +399,15 @@ func (c *Cli) ReadWs() {
 
 			if len(gs[c.game].Players) == 1 {
 				//win?
+			} else {
+				mm += 1
+				if mm >= len(d.Players) {
+					mm = 0
+				}
+				d.Turn = d.Players[mm].Id
+				gs[c.game] = d
+
+				Turn(c.game)
 			}
 		}
 	}
