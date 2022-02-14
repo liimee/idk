@@ -1,5 +1,5 @@
 <template>
-<h1>Hmm</h1>
+<h1>Monopoly</h1>
 <div class="s">
   <router-link to="/n"><button class="a">New Game</button></router-link>
   <button class="b">Join Game</button>

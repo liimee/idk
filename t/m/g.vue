@@ -6,7 +6,7 @@
   <div v-if="!str">
     <form @submit="join">
     <label for="joinas">Join as...</label>
-    <input type="text" placeholder="Hm?" id="joinas" v-model="as" required>
+    <input type="text" placeholder="Gopher" id="joinas" v-model="as" required>
     <input type="submit" class="a" value="Join">
   </form>
   </div>
@@ -54,6 +54,7 @@
     <div>
       <hr />
       <h2>Your Properties ({{da.find(g => g.Id === id).Owns.length}})</h2>
+      <p v-if="da.find(g => g.Id === id).Owns.length < 1">You don't have anything yet; go buy a property!</p>
       <ul>
         <li v-for="g, i in da.find(g => g.Id === id).Owns" :key="i">{{$refs.board.name(g)}}</li>
       </ul>
