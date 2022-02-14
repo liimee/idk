@@ -43,7 +43,13 @@
         <b>Pass:</b>
         <li v-for="v, s in bid.pa" :key="s">{{da.find(g => g.Id === v).Name}}</li>
       </ul>
+    </div>
+    <div>
       <hr />
+      <h2>Players ({{da.length}})</h2>
+      <ul>
+        <li v-for="g, i in da" :key="i">{{g.Name}}<span style="color: grey"> − has ${{g.Money}} − owns {{g.Owns.length}} properties {{g.InJail ? '− in jail':''}}</span></li>
+      </ul>
     </div>
   </div>
   </div>
