@@ -10,7 +10,7 @@
     <input type="submit" class="a" value="Join">
   </form>
   </div>
-  <div class="parent" v-if="str">
+  <div class="parent" v-if="str && !res">
   <div class="board" style="">
     <Board :dt="da" ref="board" />
   </div>
@@ -22,7 +22,7 @@
       <button class="b" @click="st">Start Game</button>
     </div>
     <div v-if="mt">
-      <button v-if="rolled || da.find(v => v.Id === id).InJail" class="b" @click="endTurn">End Turn</button>
+      <button v-if="(rolled || da.find(v => v.Id === id).InJail) && da.find(v => v.Id === id).Money >= 0" class="b" @click="endTurn">End Turn</button>
       <button v-if="mt && rolled && da.every(v => !v.Owns.includes(da.find(v => v.Id === id).Pos)) && $refs.board.pay(da.find(v => v.Id === id).Pos) > 0 && $refs.board.pay(da.find(v => v.Id === id).Pos) <= da.find(v => v.Id === id).Money && !da.find(v => v.Id === id).InJail" class="a" @click="buy">Buy</button>
       <button v-if="!rolled && !da.find(v => v.Id === id).InJail" class="a" @click="roll">Roll</button>
       <button v-if="da.find(v => v.Id === id).InJail" class="b" @click="payJail">Pay $50 to get out of Jail</button>
@@ -48,6 +48,9 @@
   </div>
   </div>
   <div v-if="err.e" class="er">{{err.m}}</div>
+  <div v-if="res">
+    <h1>You resigned</h1>
+  </div>
 </template>
 
 <style scoped>
@@ -130,11 +133,14 @@ export default {
       err: {
         e: false,
         m: ''
-      }
+      },
+      res: false
     }
   },
   unmounted() {
-    s.close();
+    try {
+      s.close();
+    } catch(_) {}
   },
   methods: {
     join(e: Event) {
@@ -224,9 +230,11 @@ export default {
       }))
     },
     resign() {
+      this.res = true;
       s.send(JSON.stringify({
         s: 'resign'
       }))
+      s.close();
     }
   }
 }
