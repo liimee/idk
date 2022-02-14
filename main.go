@@ -44,6 +44,7 @@ type User struct {
 	Id     string
 	Owns   []int
 	InJail bool
+	Color  string
 }
 
 type Game struct {
@@ -191,6 +192,8 @@ func (c *Cli) ReadWs() {
 				hu.unreg <- c
 				return
 			}
+			random.Seed(time.Now().UnixNano())
+			cols := []string{"#B10606", "#B08205", "#05B014", "#0566B0"}
 			l.Players = append(gs[s["id"]].Players, User{
 				Name:   s["as"],
 				Money:  1500,
@@ -198,6 +201,7 @@ func (c *Cli) ReadWs() {
 				Pos:    0,
 				Owns:   []int{},
 				InJail: false,
+				Color:  cols[random.Intn(len(cols))],
 			})
 			gs[s["id"]] = l
 			c.id = r
