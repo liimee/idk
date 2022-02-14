@@ -274,6 +274,7 @@ func (c *Cli) ReadWs() {
 					"Bid":   n.Bid,
 					"Biddi": n.Biddi,
 					"Pa":    n.Biddd,
+					"Biddd": n.BidPos,
 				})
 				gs[c.game].BcGame(s)
 				gs[c.game] = n
@@ -322,6 +323,7 @@ func (c *Cli) ReadWs() {
 						"Bid":   f.Bid,
 						"Biddi": f.Biddi,
 						"Pa":    f.Biddd,
+						"Biddd": f.BidPos,
 					})
 					gs[c.game].BcGame(s)
 				}
@@ -360,6 +362,7 @@ func (c *Cli) ReadWs() {
 				"Bid":   f.Bid,
 				"Biddi": f.Biddi,
 				"Pa":    f.Biddd,
+				"Biddd": f.BidPos,
 			})
 			gs[c.game].BcGame(s)
 

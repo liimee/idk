@@ -22,22 +22,27 @@
       <button class="b" @click="st">Start Game</button>
     </div>
     <div v-if="mt">
-      <button v-if="rolled" class="b" @click="endTurn">End Turn</button>
+      <button v-if="rolled || da.find(v => v.Id === id).InJail" class="b" @click="endTurn">End Turn</button>
       <button v-if="mt && rolled && da.every(v => !v.Owns.includes(da.find(v => v.Id === id).Pos)) && $refs.board.pay(da.find(v => v.Id === id).Pos) > 0 && $refs.board.pay(da.find(v => v.Id === id).Pos) <= da.find(v => v.Id === id).Money && !da.find(v => v.Id === id).InJail" class="a" @click="buy">Buy</button>
       <button v-if="!rolled && !da.find(v => v.Id === id).InJail" class="a" @click="roll">Roll</button>
       <button v-if="da.find(v => v.Id === id).InJail" class="b" @click="payJail">Pay $50 to get out of Jail</button>
     </div>
     <div v-if="bid.bid">
-      The highest bid is currently <b>${{bid.bidd}}</b>
+      <hr />
+      <div style="text-align: center">
+        <p style="text-align: center">Auction <b>{{$refs.board.name(bid.bp)}}</b></p>
+        <p>The highest bid is currently <b>${{bid.bidd}}</b></p>
+      </div>
       <form @submit="sendBid" v-if="!bid.pa.includes(id)">
         <input type="number" v-model="bid.mybidd" :min="bid.bidd+1" step="1" :max="da.find(v => v.Id === id).Money">
         <input type="submit" value="OK" class="b">
+        <button class="a" :disabled="bid.pa.includes(id)" @click="pas">Pass</button>
       </form>
-      <button class="a" :disabled="bid.pa.includes(id)" @click="pas">Pass</button>
       <ul v-if="bid.pa.length > 0">
-        Pass:
+        <b>Pass:</b>
         <li v-for="v, s in bid.pa" :key="s">{{da.find(g => g.Id === v).Name}}</li>
       </ul>
+      <hr />
     </div>
   </div>
   </div>
@@ -118,7 +123,8 @@ export default {
         bid: false,
         bidd: 0,
         mybidd: 0,
-        pa: []
+        pa: [],
+        bp: 0,
       },
       err: {
         e: false,
@@ -165,6 +171,7 @@ export default {
         this.bid.pa = ws.Pa
         this.bid.bidd = ws.Bid
         this.bid.bid = ws.Biddi
+        this.bid.bp = ws.Biddd
         break;
         case 'err':
         this.err = {

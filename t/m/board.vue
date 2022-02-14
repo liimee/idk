@@ -103,6 +103,9 @@ export default {
     },
     pay(g: number) {
       return this.board[g].Price
+    },
+    name(g: number) {
+      return this.board[g].Name
     }
   }
 }
