@@ -60,7 +60,7 @@ import Board from './board.vue';
           <li v-for="g, i in da.find(g => g.Id === id).Owns" :key="i">
             <b>{{$refs.board.name(g)}}</b>
             <a v-if="(self.Ho[g]||0) == 0" @click="mortgage(g)">[{{!self.Mo.includes(g) ? `mortgage ($${$refs.board.pay(g) / 2 })` : `unmortgage ($${($refs.board.pay(g) / 2) + ((10 / 100) * ($refs.board.pay(g) / 2))})` }}]</a>
-            <a v-if="$refs.board.board[g].Set !== 0 && (self.Ho[g]||0) < 5 && !self.Mo.includes(g)" @click="ho(g)">[Buy House]</a>
+            <a v-if="$refs.board.board[g].Set !== 0 && (self.Ho[g]||0) < 5 && !self.Mo.includes(g) && sameSet(g)" @click="ho(g)">[Buy House]</a>
             <a v-if="(self.Ho[g]||0) > 0" @click="sell(g)">[Sell House]</a>
           </li>
         </ul>
@@ -288,6 +288,12 @@ export default {
         s: 'sell',
         pos: m
       }))
+    },
+    sameSet(m: number) {
+      const l = this.$refs.board.board.filter(v => v.Set === this.$refs.board.board[m].Set).map(v => this.$refs.board.board.indexOf(v))
+      const e = this.self.Owns.filter(v => l.includes(v))
+      console.log(l, e)
+      return l.length === e.length
     }
   },
   computed: {
