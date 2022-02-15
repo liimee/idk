@@ -56,7 +56,7 @@ import Board from './board.vue';
         <h2>Your Properties ({{da.find(g => g.Id === id).Owns.length}})</h2>
         <p v-if="da.find(g => g.Id === id).Owns.length < 1">You don't have anything yet; go buy a property!</p>
         <ul>
-          <li v-for="g, i in da.find(g => g.Id === id).Owns" :key="i"><b>{{$refs.board.name(g)}}</b> <a @click="mortgage(g)">[{{!da.find(g => g.Id === id).Mo.includes(g) ? 'mortgage' : 'unmortgage' }}]</a></li>
+          <li v-for="g, i in da.find(g => g.Id === id).Owns" :key="i"><b>{{$refs.board.name(g)}}</b> <a @click="mortgage(g)">[{{!da.find(g => g.Id === id).Mo.includes(g) ? `mortgage ($${$refs.board.pay(g) / 2 })` : `unmortgage ($${($refs.board.pay(g) / 2) + ((10 / 100) * ($refs.board.pay(g) / 2))})` }}]</a></li>
         </ul>
       </div>
     </div>

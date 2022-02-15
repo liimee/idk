@@ -427,7 +427,7 @@ func (c *Cli) ReadWs() {
 					u.Mo = append(u.Mo, pos)
 				} else {
 					ps := board.Board[pos].Price / 2
-					u.Money -= (ps + ((10 / 100) * ps))
+					u.Money -= (ps + int((0.1 * float64(ps))))
 					index := 0
 					for i, vv := range u.Mo {
 						if vv == pos {
