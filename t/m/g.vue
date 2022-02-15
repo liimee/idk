@@ -3,6 +3,7 @@ import Board from './board.vue';
 </script>
 
 <template>
+  <title>Game {{$route.params.id}} − Monopoly</title>
   <div v-if="!str">
     <form @submit="join">
       <label for="joinas">Join as...</label>

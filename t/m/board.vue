@@ -1,8 +1,9 @@
 <template>
   <p v-if="err">Cannot load board!</p>
   <div id="board" ref="s">
+    <div id="center"><h1>Monopoly</h1></div>
     <div class="row" :data-row="x" :key="x" v-for="(_, x) in 4">
-      <div class="c" :style="{background: `linear-gradient(to bottom, ${['#fff', '#CB8556', '#2AC3D1', '#FF0088', '#E88720', '#CB0000', '#F6BE16', '#00C750', '#0047CB'][board[(x*10)+i].Set]}, #fff, #fff)`}" v-for="(s, i) in board.filter((_, e) => Math.floor(e / 10) == x)" :key="i" >
+      <div class="c" :style="{background: `linear-gradient(to bottom, ${['transparent', '#CB8556', '#2AC3D1', '#FF0088', '#E88720', '#CB0000', '#F6BE16', '#00C750', '#0047CB'][board[(x*10)+i].Set]}, transparent, transparent)`}" v-for="(s, i) in board.filter((_, e) => Math.floor(e / 10) == x)" :key="i" >
         <div><b>{{s.Name}}</b></div>
         <div>{{['Chance', 'Community Chest', 'IN JAIL', 'Free Parking', 'Go to Jail :)'].includes(s.Name) ? '' : '$'+s.Price}}</div>
         <div style="color: grey" v-if="dt.some(v => v.Owns.includes((x*10)+i))">({{dt.find(v => v.Owns.includes((x*10)+i)).Name}})</div>
@@ -20,6 +21,7 @@
   }
 
   #board {
+    background-color: #FFF9DC;
     display: grid;
     grid-auto-columns: 8fr;
     grid-auto-rows: 9fr;
@@ -62,6 +64,14 @@
    flex-direction: column;
   }
 
+  #center {
+    grid-area: o;
+    font-size: 5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .c {
     border: solid 3px #000;
     width: 100%;
@@ -102,11 +112,13 @@ export default {
       this.err = true;
     }).then(v => {
       this.board = v
+    }).then(() => {
+      this.scr(0)
     })
   },
   methods: {
     scr(g: number) {
-      (this.$refs.s as HTMLElement).children[Math.floor(g / 10)].children[g-(Math.floor(g / 10)*10)].scrollIntoView()
+      (this.$refs.s as HTMLElement).children[Math.floor(g / 10) + 1].children[g-(Math.floor(g / 10)*10)].scrollIntoView()
     },
     pay(g: number) {
       return this.board[g].Price

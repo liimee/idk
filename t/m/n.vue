@@ -1,4 +1,5 @@
 <template>
+  <title>New Game − Monopoly</title>
   <p v-if="err">an error occured</p>
 </template>
 
