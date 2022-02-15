@@ -56,7 +56,7 @@
       <h2>Your Properties ({{da.find(g => g.Id === id).Owns.length}})</h2>
       <p v-if="da.find(g => g.Id === id).Owns.length < 1">You don't have anything yet; go buy a property!</p>
       <ul>
-        <li v-for="g, i in da.find(g => g.Id === id).Owns" :key="i">{{$refs.board.name(g)}}</li>
+        <li v-for="g, i in da.find(g => g.Id === id).Owns" :key="i"><b>{{$refs.board.name(g)}}</b> <a @click="mortgage(g)">[{{!da.find(g => g.Id === id).Mo.includes(g) ? 'mortgage' : 'unmortgage' }}]</a></li>
       </ul>
     </div>
   </div>
@@ -122,6 +122,13 @@ button:disabled {
   border-radius: 6px;
   margin: 1em;
   font-weight: bold;
+}
+
+li > a {
+  text-decoration: underline;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
 }
 </style>
 
@@ -249,6 +256,12 @@ export default {
         s: 'resign'
       }))
       s.close();
+    },
+    mortgage(m) {
+      s.send(JSON.stringify({
+        s: 'mortgage',
+        pos: m
+      }))
     }
   }
 }
