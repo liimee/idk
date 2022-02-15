@@ -400,7 +400,11 @@ func (c *Cli) ReadWs() {
 			gs[c.game].BcGame(br)
 
 			if len(gs[c.game].Players) == 1 {
-				//win?
+				co := GetClisById(d.Players[0].Id).co
+				co.WriteJSON(map[string]string{
+					"S": "win",
+				})
+				co.Close()
 			} else {
 				mm += 1
 				if mm >= len(d.Players) {

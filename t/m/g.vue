@@ -10,7 +10,7 @@ import Board from './board.vue';
       <input type="submit" class="a" value="Join">
     </form>
   </div>
-  <div class="parent" v-if="str && !res">
+  <div class="parent" v-if="str && !res && !win">
     <div class="board" style="">
       <Board :dt="da" ref="board" />
     </div>
@@ -37,8 +37,8 @@ import Board from './board.vue';
         <form @submit="sendBid" v-if="!bid.pa.includes(id)">
           <input type="number" v-model="bid.mybidd" :min="bid.bidd+1" step="1" :max="da.find(v => v.Id === id).Money">
           <input type="submit" value="OK" class="b">
-          <button class="a" :disabled="bid.pa.includes(id)" @click="pas">Pass</button>
         </form>
+        <div style="text-align: center"><button class="a" :disabled="bid.pa.includes(id)" @click="pas">Pass</button></div>
         <ul v-if="bid.pa.length > 0">
           <b>Pass:</b>
           <li v-for="v, s in bid.pa" :key="s">{{da.find(g => g.Id === v).Name}}</li>
@@ -64,6 +64,10 @@ import Board from './board.vue';
   <div v-if="err.e" class="er">{{err.m}}</div>
   <div v-if="res">
     <h1>You resigned</h1>
+  </div>
+  <div v-if="win" style="text-align: center">
+    <h1>Congratulations!</h1>
+    <p>You have won this game</p>
   </div>
 </template>
 
@@ -155,7 +159,8 @@ export default {
         e: false,
         m: ''
       },
-      res: false
+      res: false,
+      win: false
     }
   },
   unmounted() {
@@ -206,6 +211,9 @@ export default {
             e: true,
             m: ws.E
           }
+          break;
+          case 'win':
+          this.win = true;
         }
       })
     },
