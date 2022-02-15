@@ -3,7 +3,7 @@
 wip
 - [x] board stuff
 - [x] buy stuff
-- [ ] auction stuff
+- [x] auction stuff
 - [ ] houses and hotels
 
 ## running
