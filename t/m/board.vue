@@ -23,8 +23,8 @@
   #board {
     background-color: #FFF9DC;
     display: grid;
-    grid-auto-columns: 8fr;
-    grid-auto-rows: 9fr;
+    grid-auto-columns: 390px;
+    grid-auto-rows: 180px;
     width: max-content;
     grid-template-areas:
       "a a a a a a a a a a a d"
@@ -76,9 +76,8 @@
     border: solid 3px #000;
     width: 100%;
     height: 100%;
-    word-break: break-all;
+    word-wrap: break-word;
     padding: 1em;
-    overflow: hidden;
     text-align: center;
   }
 
