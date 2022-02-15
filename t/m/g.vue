@@ -1,65 +1,65 @@
 <script setup lang="ts">
-  import Board from './board.vue';
+import Board from './board.vue';
 </script>
 
 <template>
   <div v-if="!str">
     <form @submit="join">
-    <label for="joinas">Join as...</label>
-    <input type="text" placeholder="Gopher" id="joinas" @input="e => as = e.target.value" required>
-    <input type="submit" class="a" value="Join">
-  </form>
+      <label for="joinas">Join as...</label>
+      <input type="text" placeholder="Gopher" id="joinas" @input="e => as = e.target.value" required>
+      <input type="submit" class="a" value="Join">
+    </form>
   </div>
   <div class="parent" v-if="str && !res">
-  <div class="board" style="">
-    <Board :dt="da" ref="board" />
-  </div>
-  <div style="padding: 1em">
-    <div class="center">You currently have
-      <div style="font-size: 1.6em; font-weight: bold">${{(da.find(v => v.Id === id)||{Money: 0}).Money}}</div>
+    <div class="board" style="">
+      <Board :dt="da" ref="board" />
     </div>
-    <div v-if="!start">
-      <button class="b" @click="st">Start Game</button>
-    </div>
-    <div v-if="mt">
-      <button v-if="(rolled || da.find(v => v.Id === id).InJail) && da.find(v => v.Id === id).Money >= 0" class="b" @click="endTurn">End Turn</button>
-      <button v-if="mt && rolled && da.every(v => !v.Owns.includes(da.find(v => v.Id === id).Pos)) && $refs.board.pay(da.find(v => v.Id === id).Pos) > 0 && $refs.board.pay(da.find(v => v.Id === id).Pos) <= da.find(v => v.Id === id).Money && !da.find(v => v.Id === id).InJail" class="a" @click="buy">Buy</button>
-      <button v-if="!rolled && !da.find(v => v.Id === id).InJail" class="a" @click="roll">Roll</button>
-      <button v-if="da.find(v => v.Id === id).InJail" class="b" @click="payJail">Pay $50 to get out of Jail</button>
-      <button v-if="da.find(v => v.Id === id).Money < 0" class="a" @click="resign">Resign</button>
-    </div>
-    <div v-if="bid.bid">
-      <hr />
-      <div style="text-align: center">
-        <p style="text-align: center">Auction <b>{{$refs.board.name(bid.bp)}}</b></p>
-        <p>The highest bid is currently <b>${{bid.bidd}}</b></p>
+    <div style="padding: 1em">
+      <div class="center">You currently have
+        <div style="font-size: 1.6em; font-weight: bold">${{(da.find(v => v.Id === id)||{Money: 0}).Money}}</div>
       </div>
-      <form @submit="sendBid" v-if="!bid.pa.includes(id)">
-        <input type="number" v-model="bid.mybidd" :min="bid.bidd+1" step="1" :max="da.find(v => v.Id === id).Money">
-        <input type="submit" value="OK" class="b">
-        <button class="a" :disabled="bid.pa.includes(id)" @click="pas">Pass</button>
-      </form>
-      <ul v-if="bid.pa.length > 0">
-        <b>Pass:</b>
-        <li v-for="v, s in bid.pa" :key="s">{{da.find(g => g.Id === v).Name}}</li>
-      </ul>
+      <div v-if="!start">
+        <button class="b" @click="st">Start Game</button>
+      </div>
+      <div v-if="mt">
+        <button v-if="(rolled || da.find(v => v.Id === id).InJail) && da.find(v => v.Id === id).Money >= 0" class="b" @click="endTurn">End Turn</button>
+        <button v-if="mt && rolled && da.every(v => !v.Owns.includes(da.find(v => v.Id === id).Pos)) && $refs.board.pay(da.find(v => v.Id === id).Pos) > 0 && $refs.board.pay(da.find(v => v.Id === id).Pos) <= da.find(v => v.Id === id).Money && !da.find(v => v.Id === id).InJail" class="a" @click="buy">Buy</button>
+        <button v-if="!rolled && !da.find(v => v.Id === id).InJail" class="a" @click="roll">Roll</button>
+        <button v-if="da.find(v => v.Id === id).InJail" class="b" @click="payJail">Pay $50 to get out of Jail</button>
+        <button v-if="da.find(v => v.Id === id).Money < 0" class="a" @click="resign">Resign</button>
+      </div>
+      <div v-if="bid.bid">
+        <hr />
+        <div style="text-align: center">
+          <p style="text-align: center">Auction <b>{{$refs.board.name(bid.bp)}}</b></p>
+          <p>The highest bid is currently <b>${{bid.bidd}}</b></p>
+        </div>
+        <form @submit="sendBid" v-if="!bid.pa.includes(id)">
+          <input type="number" v-model="bid.mybidd" :min="bid.bidd+1" step="1" :max="da.find(v => v.Id === id).Money">
+          <input type="submit" value="OK" class="b">
+          <button class="a" :disabled="bid.pa.includes(id)" @click="pas">Pass</button>
+        </form>
+        <ul v-if="bid.pa.length > 0">
+          <b>Pass:</b>
+          <li v-for="v, s in bid.pa" :key="s">{{da.find(g => g.Id === v).Name}}</li>
+        </ul>
+      </div>
+      <div>
+        <hr />
+        <h2>Players ({{da.length}})</h2>
+        <ul>
+          <li v-for="g, i in da" :key="i">{{g.Name}}<span style="color: grey"> − has ${{g.Money}} − owns {{g.Owns.length}} properties {{g.InJail ? '− in jail':''}}</span></li>
+        </ul>
+      </div>
+      <div>
+        <hr />
+        <h2>Your Properties ({{da.find(g => g.Id === id).Owns.length}})</h2>
+        <p v-if="da.find(g => g.Id === id).Owns.length < 1">You don't have anything yet; go buy a property!</p>
+        <ul>
+          <li v-for="g, i in da.find(g => g.Id === id).Owns" :key="i"><b>{{$refs.board.name(g)}}</b> <a @click="mortgage(g)">[{{!da.find(g => g.Id === id).Mo.includes(g) ? 'mortgage' : 'unmortgage' }}]</a></li>
+        </ul>
+      </div>
     </div>
-    <div>
-      <hr />
-      <h2>Players ({{da.length}})</h2>
-      <ul>
-        <li v-for="g, i in da" :key="i">{{g.Name}}<span style="color: grey"> − has ${{g.Money}} − owns {{g.Owns.length}} properties {{g.InJail ? '− in jail':''}}</span></li>
-      </ul>
-    </div>
-    <div>
-      <hr />
-      <h2>Your Properties ({{da.find(g => g.Id === id).Owns.length}})</h2>
-      <p v-if="da.find(g => g.Id === id).Owns.length < 1">You don't have anything yet; go buy a property!</p>
-      <ul>
-        <li v-for="g, i in da.find(g => g.Id === id).Owns" :key="i"><b>{{$refs.board.name(g)}}</b> <a @click="mortgage(g)">[{{!da.find(g => g.Id === id).Mo.includes(g) ? 'mortgage' : 'unmortgage' }}]</a></li>
-      </ul>
-    </div>
-  </div>
   </div>
   <div v-if="err.e" class="er">{{err.m}}</div>
   <div v-if="res">
@@ -68,26 +68,26 @@
 </template>
 
 <style scoped>
-  .board {
-    width: 45vw;
-    height: calc(100vh - 4em);
-    overflow: auto;
-    white-space: nowrap;
-    padding: 1em;
-    border-radius: 6px;
-    border: solid 2px grey;
-  }
+.board {
+  width: 45vw;
+  height: calc(100vh - 4em);
+  overflow: auto;
+  white-space: nowrap;
+  padding: 1em;
+  border-radius: 6px;
+  border: solid 2px grey;
+}
 
-  .parent {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-  }
+.parent {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
 
-  .center {
-    text-align: center;
-  }
+.center {
+  text-align: center;
+}
 
-  form {
+form {
   text-align: center;
 }
 
@@ -176,38 +176,38 @@ export default {
         }));
       });
 
-    s.addEventListener('message', s => {
-      const ws = JSON.parse(s.data)
-      switch(ws.S) {
-        case 'id':
-        this.id = ws.Id
-        break;
-        case 'data':
-        this.da = ws.Data
-        if(this.mt) {
-          // @ts-ignore
-          this.$refs.board.scr(this.da.find(v => v.Id === this.id).Pos)
+      s.addEventListener('message', s => {
+        const ws = JSON.parse(s.data)
+        switch(ws.S) {
+          case 'id':
+          this.id = ws.Id
+          break;
+          case 'data':
+          this.da = ws.Data
+          if(this.mt) {
+            // @ts-ignore
+            this.$refs.board.scr(this.da.find(v => v.Id === this.id).Pos)
+          }
+          break;
+          case 'start':
+          this.start = ws.Start
+          break;
+          case 'turn':
+          this.mt = true;
+          break;
+          case 'bid':
+          this.bid.pa = ws.Pa
+          this.bid.bidd = ws.Bid
+          this.bid.bid = ws.Biddi
+          this.bid.bp = ws.Biddd
+          break;
+          case 'err':
+          this.err = {
+            e: true,
+            m: ws.E
+          }
         }
-        break;
-        case 'start':
-        this.start = ws.Start
-        break;
-        case 'turn':
-        this.mt = true;
-        break;
-        case 'bid':
-        this.bid.pa = ws.Pa
-        this.bid.bidd = ws.Bid
-        this.bid.bid = ws.Biddi
-        this.bid.bp = ws.Biddd
-        break;
-        case 'err':
-        this.err = {
-          e: true,
-          m: ws.E
-        }
-      }
-    })
+      })
     },
     st() {
       s.send(JSON.stringify({
