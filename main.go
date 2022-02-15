@@ -46,6 +46,7 @@ type User struct {
 	InJail bool
 	Color  string
 	Mo     []int
+	Ho     map[int]int
 }
 
 type Game struct {
@@ -204,6 +205,7 @@ func (c *Cli) ReadWs() {
 				InJail: false,
 				Color:  cols[random.Intn(len(cols))],
 				Mo:     []int{},
+				Ho:     map[int]int{},
 			})
 			gs[s["id"]] = l
 			c.id = r
@@ -247,8 +249,8 @@ func (c *Cli) ReadWs() {
 				ss.InJail = true
 			}
 			if WhoOwnsIt(c.game, ss.Pos) != c.id && WhoOwnsIt(c.game, ss.Pos) != "" && !IsMortgaged(ss.Pos, gs[c.game]) {
-				ss.Money -= board.Board[ss.Pos].Rent[0] // "0"
-				gs[c.game].Players[GetIndexById(WhoOwnsIt(c.game, ss.Pos), gs[c.game])].Money += board.Board[ss.Pos].Rent[0]
+				ss.Money -= board.Board[ss.Pos].Rent[gs[c.game].Players[GetIndexById(WhoOwnsIt(c.game, ss.Pos), gs[c.game])].Ho[ss.Pos]] // "0"
+				gs[c.game].Players[GetIndexById(WhoOwnsIt(c.game, ss.Pos), gs[c.game])].Money += board.Board[ss.Pos].Rent[gs[c.game].Players[GetIndexById(WhoOwnsIt(c.game, ss.Pos), gs[c.game])].Ho[ss.Pos]]
 			}
 			if ss.Pos == 4 {
 				ss.Money -= 200
@@ -419,7 +421,17 @@ func (c *Cli) ReadWs() {
 			var s map[string]interface{}
 			json.Unmarshal(m, &s)
 			pos := int(s["pos"].(float64))
-			if WhoOwnsIt(c.game, pos) == c.id {
+
+			or := false
+			for _, v := range GetPlayerById(c.id, gs[c.game]).Owns {
+				if board.Board[v].Set == board.Board[pos].Set {
+					if GetPlayerById(c.id, gs[c.game]).Ho[v] > 0 {
+						or = true
+					}
+				}
+			}
+
+			if WhoOwnsIt(c.game, pos) == c.id && !or {
 				n := gs[c.game]
 				u := &n.Players[GetIndexById(c.game, n)]
 				if !IsMortgaged(pos, gs[c.game]) {
@@ -446,8 +458,98 @@ func (c *Cli) ReadWs() {
 				}{S: "data", Data: gs[c.game].Players})
 				gs[c.game].BcGame(br)
 			}
+		} else if s["s"] == "ho" {
+			var s map[string]interface{}
+			json.Unmarshal(m, &s)
+			pos := int(s["pos"].(float64))
+
+			pl := GetPlayerById(c.id, gs[c.game])
+
+			if _, ok := pl.Ho[pos]; !ok {
+				pl.Ho[pos] = 0
+			}
+
+			if !IsMortgaged(pos, gs[c.game]) && SameOwner(pos, pl, gs[c.game]) && pl.Ho[pos] < 5 {
+				switch board.Board[pos].Set {
+				case 1, 2:
+					pl.Money -= 50
+				case 3, 4:
+					pl.Money -= 100
+				case 5, 6:
+					pl.Money -= 150
+				case 7, 8:
+					pl.Money -= 200
+				}
+
+				pl.Ho[pos] += 1
+			}
+
+			g := gs[c.game]
+			g.Players[GetIndexById(c.id, g)] = pl
+			gs[c.game] = g
+
+			br, _ := json.Marshal(struct {
+				S    string
+				Data []User
+			}{S: "data", Data: gs[c.game].Players})
+			gs[c.game].BcGame(br)
+		} else if s["s"] == "sell" {
+			var s map[string]interface{}
+			json.Unmarshal(m, &s)
+			pos := int(s["pos"].(float64))
+
+			pl := GetPlayerById(c.id, gs[c.game])
+
+			if _, ok := pl.Ho[pos]; !ok {
+				pl.Ho[pos] = 0
+			}
+
+			if !IsMortgaged(pos, gs[c.game]) && SameOwner(pos, pl, gs[c.game]) && pl.Ho[pos] > 0 {
+				switch board.Board[pos].Set {
+				case 1, 2:
+					pl.Money += 50 / 2
+				case 3, 4:
+					pl.Money += 100 / 2
+				case 5, 6:
+					pl.Money += 150 / 2
+				case 7, 8:
+					pl.Money += 200 / 2
+				}
+
+				pl.Ho[pos] -= 1
+			}
+
+			g := gs[c.game]
+			g.Players[GetIndexById(c.id, g)] = pl
+			gs[c.game] = g
+
+			br, _ := json.Marshal(struct {
+				S    string
+				Data []User
+			}{S: "data", Data: gs[c.game].Players})
+			gs[c.game].BcGame(br)
 		}
 	}
+}
+
+func SameOwner(p int, u User, gm Game) bool {
+	set := board.Board[p].Set
+
+	or := 0
+	for _, v := range board.Board {
+		if v.Set == set {
+			or++
+		}
+	}
+
+	pp := 0
+	for _, v := range u.Owns {
+		if board.Board[v].Set == set && !IsMortgaged(v, gm) {
+			pp++
+		}
+	}
+
+	return or == pp
 }
 
 func Turn(g string) {
