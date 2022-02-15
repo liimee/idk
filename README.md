@@ -4,7 +4,8 @@ wip
 - [x] board stuff
 - [x] buy stuff
 - [x] auction stuff
-- [ ] houses and hotels
+- [x] houses and hotels
+- [ ] chance / community chest cards
 - [ ] check if it's the right way to play
 
 ## running
