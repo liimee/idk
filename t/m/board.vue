@@ -7,6 +7,10 @@
         <div><b>{{s.Name}}</b></div>
         <div>{{['Chance', 'Community Chest', 'IN JAIL', 'Free Parking', 'Go to Jail :)'].includes(s.Name) ? '' : '$'+s.Price}}</div>
         <div style="color: grey" v-if="dt.some(v => v.Owns.includes((x*10)+i))">({{dt.find(v => v.Owns.includes((x*10)+i)).Name}})</div>
+        <div v-if="dt.some(v => v.Ho[(x*10)+i])">
+          <span v-if="dt.find(v => v.Ho[(x*10)+i]).Ho[(x*10)+i] < 5" v-for="_ in dt.find(v => v.Ho[(x*10)+i]).Ho[(x*10)+i]">🏠</span>
+          <span v-else>🏨</span>
+        </div>
         <div>
           <span :style="{backgroundColor: s.Color}" class="player" v-for="(s, x) in dt.filter(v => v.Pos === (x*10)+i && Math.floor(v.Pos / 10) === x)" :key="x">{{s.Name}}</span>
         </div>

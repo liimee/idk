@@ -57,7 +57,12 @@ import Board from './board.vue';
         <h2>Your Properties ({{da.find(g => g.Id === id).Owns.length}})</h2>
         <p v-if="da.find(g => g.Id === id).Owns.length < 1">You don't have anything yet; go buy a property!</p>
         <ul>
-          <li v-for="g, i in da.find(g => g.Id === id).Owns" :key="i"><b>{{$refs.board.name(g)}}</b> <a @click="mortgage(g)">[{{!da.find(g => g.Id === id).Mo.includes(g) ? `mortgage ($${$refs.board.pay(g) / 2 })` : `unmortgage ($${($refs.board.pay(g) / 2) + ((10 / 100) * ($refs.board.pay(g) / 2))})` }}]</a></li>
+          <li v-for="g, i in da.find(g => g.Id === id).Owns" :key="i">
+            <b>{{$refs.board.name(g)}}</b>
+            <a v-if="(self.Ho[g]||0) == 0" @click="mortgage(g)">[{{!self.Mo.includes(g) ? `mortgage ($${$refs.board.pay(g) / 2 })` : `unmortgage ($${($refs.board.pay(g) / 2) + ((10 / 100) * ($refs.board.pay(g) / 2))})` }}]</a>
+            <a v-if="$refs.board.board[g].Set !== 0 && (self.Ho[g]||0) < 5 && !self.Mo.includes(g)" @click="ho(g)">[Buy House]</a>
+            <a v-if="(self.Ho[g]||0) > 0" @click="sell(g)">[Sell House]</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -266,11 +271,28 @@ export default {
       }))
       s.close();
     },
-    mortgage(m) {
+    mortgage(m: number) {
       s.send(JSON.stringify({
         s: 'mortgage',
         pos: m
       }))
+    },
+    ho(m: number) {
+      s.send(JSON.stringify({
+        s: 'ho',
+        pos: m
+      }))
+    },
+    sell(m: number) {
+      s.send(JSON.stringify({
+        s: 'sell',
+        pos: m
+      }))
+    }
+  },
+  computed: {
+    self() {
+      return this.da.find(g => g.Id === this.id)
     }
   }
 }
