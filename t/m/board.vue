@@ -2,7 +2,7 @@
   <p v-if="err">Cannot load board!</p>
   <div id="board" ref="s">
     <div class="row" :data-row="x" :key="x" v-for="(_, x) in 4">
-      <div class="c" v-for="(s, i) in board.filter((_, e) => Math.floor(e / 10) == x)" :key="i" >
+      <div class="c" :style="{background: `linear-gradient(to bottom, ${['#fff', '#CB8556', '#2AC3D1', '#FF0088', '#E88720', '#CB0000', '#F6BE16', '#00C750', '#0047CB'][board[(x*10)+i].Set]}, #fff, #fff)`}" v-for="(s, i) in board.filter((_, e) => Math.floor(e / 10) == x)" :key="i" >
         <div><b>{{s.Name}}</b></div>
         <div>{{['Chance', 'Community Chest', 'IN JAIL', 'Free Parking', 'Go to Jail :)'].includes(s.Name) ? '' : '$'+s.Price}}</div>
         <div style="color: grey" v-if="dt.some(v => v.Owns.includes((x*10)+i))">({{dt.find(v => v.Owns.includes((x*10)+i)).Name}})</div>
@@ -56,7 +56,7 @@
    grid-area: a;
    flex-direction: row;
   }
-  
+
   .row[data-row="3"] {
    grid-area: d;
    flex-direction: column;
