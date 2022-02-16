@@ -68,6 +68,7 @@ import Board from './board.vue';
       <div v-if="card.card">
         <hr />
         <div class="card">
+          <div><b>{{card.t == 'a' ? 'Chance' : 'Community Chest'}}</b></div>
           {{card.str}}
         </div>
       </div>
@@ -182,7 +183,8 @@ export default {
       win: false,
       card: {
         card: false,
-        str: ''
+        str: '',
+        t: 'a'
       }
     }
   },
@@ -241,6 +243,7 @@ export default {
           case 'card':
           this.card.card = true;
           this.card.str = ws.Str;
+          this.card.t = ws.T;
         }
       })
     },

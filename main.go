@@ -255,8 +255,19 @@ func (c *Cli) ReadWs() {
 				c.co.WriteJSON(map[string]string{
 					"S":   "card",
 					"Str": board.ChanceCards[rk].Str,
+					"T":   "a",
 				})
 				g.Players[GetIndexById(g.Turn, g)] = board.ChanceCards[rk].Fun(GetPlayerById(c.id, g))
+			}
+			if board.Board[ss.Pos].Name == "Community Chest" {
+				random.Seed(time.Now().UnixNano())
+				rk := random.Intn(len(board.CommunityChestCards))
+				c.co.WriteJSON(map[string]string{
+					"S":   "card",
+					"Str": board.CommunityChestCards[rk].Str,
+					"T":   "b",
+				})
+				g.Players[GetIndexById(g.Turn, g)] = board.CommunityChestCards[rk].Fun(GetPlayerById(c.id, g))
 			}
 			gs[c.game] = g
 

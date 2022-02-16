@@ -181,3 +181,128 @@ var ChanceCards = []Ca{
 		},
 	},
 }
+
+var CommunityChestCards = []Ca{
+	{
+		Str: "You have won second prize in a beauty contest. Collect $10.",
+		Fun: func(w user.User) user.User {
+			w.Money += 10
+
+			return w
+		},
+	},
+	{
+		Str: "From sale of stock, you get $50.",
+		Fun: func(w user.User) user.User {
+			w.Money += 50
+
+			return w
+		},
+	},
+	{
+		Str: "Life insurance matures. Collect $100.",
+		Fun: func(w user.User) user.User {
+			w.Money += 100
+
+			return w
+		},
+	},
+	{
+		Str: "Income tax refund. Collect $20.",
+		Fun: func(w user.User) user.User {
+			w.Money += 20
+
+			return w
+		},
+	},
+	{
+		Str: "Holiday fund matures. Receive $100.",
+		Fun: func(w user.User) user.User {
+			w.Money += 100
+
+			return w
+		},
+	},
+	{
+		Str: "You inherit $100.",
+		Fun: func(w user.User) user.User {
+			w.Money += 100
+
+			return w
+		},
+	},
+	{
+		Str: "Receive $25 consultancy fee.",
+		Fun: func(w user.User) user.User {
+			w.Money += 25
+
+			return w
+		},
+	},
+	{
+		Str: "Pay hospital fees of $100.",
+		Fun: func(w user.User) user.User {
+			w.Money -= 100
+
+			return w
+		},
+	},
+	{
+		Str: "Bank error in your favor. Collect $200.",
+		Fun: func(w user.User) user.User {
+			w.Money += 200
+
+			return w
+		},
+	},
+	{
+		Str: "Pay school fees of $50.",
+		Fun: func(w user.User) user.User {
+			w.Money -= 50
+
+			return w
+		},
+	},
+	{
+		Str: "Doctor's fee. Pay $50.",
+		Fun: func(w user.User) user.User {
+			w.Money -= 50
+
+			return w
+		},
+	},
+	{
+		Str: "Advance to \"GO\" (Collect $200).",
+		Fun: func(w user.User) user.User {
+			w.Money += 200
+			w.Pos = 0
+
+			return w
+		},
+	},
+	{
+		Str: "You are assessed for street repairs. $40 per house. $115 per hotel.",
+		Fun: func(w user.User) user.User {
+			for _, v := range w.Ho {
+				if v > 0 {
+					if v == 5 {
+						w.Money -= 115
+					} else {
+						w.Money -= 40
+					}
+				}
+			}
+
+			return w
+		},
+	},
+	{
+		Str: "Go to Jail. Go directly to Jail. Do not pass \"GO\". Do not collect $200.",
+		Fun: func(w user.User) user.User {
+			w.Pos = 10
+			w.InJail = true
+
+			return w
+		},
+	},
+}
