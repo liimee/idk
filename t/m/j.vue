@@ -1,7 +1,7 @@
 <template>
-  <form @submit="$router.replace('/g/'+a)">
+  <form @submit="submit">
     <label for="gameid">Game ID</label>
-    <input type="text" id="gameid" v-model="a" required><input class="b" type="submit" value="Join">
+    <input type="text" id="gameid" v-model="a" placeholder="12a34b5c6def" required><input class="b" type="submit" value="Join">
   </form>
 </template>
 
@@ -35,6 +35,17 @@ export default {
   data() {
     return {
       a: ''
+    }
+  },
+  methods: {
+    submit(e) {
+      e.preventDefault()
+      fetch(import.meta.env.VITE_API+'/api/exists/'+this.a)
+      .then(v => v.json())
+      .then(v => {
+        if(v.Exists) this.$router.replace('/g/'+this.a)
+        else alert('Game does not exist :(')
+      })
     }
   }
 }

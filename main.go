@@ -70,6 +70,7 @@ func main() {
 		b, _ := json.Marshal(board.Board)
 		w.Write([]byte(b))
 	})
+	e.Path("/api/exists/{game}").Methods("GET").HandlerFunc(GameExists)
 
 	hu = &H{
 		bc:    make(chan []byte),
@@ -641,4 +642,14 @@ func RemovePlayer(s string, d string) []User {
 		}
 	}
 	return n
+}
+
+func GameExists(w http.ResponseWriter, h *http.Request) {
+	w.Header().Add("Access-Control-Allow-Origin", os.Getenv("CL"))
+	p := mux.Vars(h)
+	_, ok := gs[p["game"]]
+	j, _ := json.Marshal(map[string]bool{
+		"Exists": ok,
+	})
+	w.Write(j)
 }

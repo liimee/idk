@@ -209,7 +209,19 @@ export default {
   methods: {
     join(e: Event) {
       e.preventDefault()
+
+      fetch(import.meta.env.VITE_API+'/api/exists/'+this.$route.params.id)
+      .then(v => v.json())
+      .then(v => {
+        if(!v.Exists) {
+          this.$router.replace('/')
+          alert('Game does not exist :(')
+          return;
+        }
+      })
+
       this.str = true;
+
       s = new WebSocket((import.meta.env.VITE_API||'').replace(/https?/, 'ws')+'/api/ws')
       s.addEventListener('open', () => {
         s.send(JSON.stringify({
