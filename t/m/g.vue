@@ -72,6 +72,11 @@ import Board from './board.vue';
           {{card.str}}
         </div>
       </div>
+      <div v-if="!start">
+        <hr />
+        To invite someone, you can share either this page's URL, or the Game ID:
+        <div class="card l">{{$route.params.id}}</div>
+      </div>
     </div>
   </div>
   <div v-if="err.e" class="er">{{err.m}}</div>
@@ -153,6 +158,14 @@ li > a {
   border-radius: 6px;
   padding: 1em;
   width: 60%;
+}
+
+.card.l {
+  width: max-content;
+  padding: .5em;
+  margin: .5em 0;
+  font-weight: bold;
+  letter-spacing: 2px;
 }
 </style>
 

@@ -3,7 +3,7 @@
   <h1>Monopoly</h1>
   <div class="s">
     <router-link to="/n"><button class="a">New Game</button></router-link>
-    <button class="b">Join Game</button>
+    <router-link to="/j"><button class="b">Join Game</button></router-link>
   </div>
 </template>
 
