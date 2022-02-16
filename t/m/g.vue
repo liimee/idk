@@ -235,7 +235,7 @@ export default {
 
       this.str = true;
 
-      s = new WebSocket((import.meta.env.VITE_API||'').replace(/https?/, 'ws')+'/api/ws')
+      s = new WebSocket((import.meta.env.VITE_API||'').replace(/https?/, 'wss')+'/api/ws')
       s.addEventListener('open', () => {
         s.send(JSON.stringify({
           s: 'join',
