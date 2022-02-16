@@ -5,7 +5,7 @@ wip
 - [x] buy stuff
 - [x] auction stuff
 - [x] houses and hotels
-- [ ] chance / community chest cards
+- [x] chance / community chest cards
 - [ ] check if it's the right way to play
 
 ## running
