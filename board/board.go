@@ -1,5 +1,7 @@
 package board
 
+import "github.com/liimee/idk/user"
+
 type Sq struct {
 	Name  string
 	Price int
@@ -12,6 +14,11 @@ func (s Sq) nop() Sq {
 	s.Set = 0
 	s.Rent = []int{0, 0, 0, 0, 0, 0}
 	return s
+}
+
+type Ca struct {
+	Str string
+	Fun func(user.User) user.User
 }
 
 var Chance = Sq{Name: "Chance"}.nop()
@@ -47,7 +54,7 @@ var Board = []Sq{
 	{Name: "...", Price: 260, Rent: []int{22, 110, 330, 800, 975, 1150}, Set: 6},
 	{Name: "Somewhere", Price: 260, Rent: []int{22, 110, 330, 800, 975, 1150}, Set: 6},
 	{Name: "Water Works", Price: 150, Rent: []int{30}, Set: 0},
-	{Name: "Please go to jail please 🥺", Price: 280, Rent: []int{24, 120, 360, 850, 1025, 1200}, Set: 6},
+	{Name: "Please go to jail please p%:", Price: 280, Rent: []int{24, 120, 360, 850, 1025, 1200}, Set: 6},
 	Sq{Name: "Go to Jail :)"}.nop(),
 	{Name: "Pacific Ocean", Price: 300, Rent: []int{26, 130, 390, 900, 1100, 1275}, Set: 7},
 	{Name: "${12086..toString(26)} Avenue", Price: 300, Rent: []int{26, 130, 390, 900, 1100, 1275}, Set: 7},
@@ -58,4 +65,119 @@ var Board = []Sq{
 	{Name: "Yes we're almost done!!!!", Price: 350, Rent: []int{35, 175, 500, 1100, 1300, 1500}, Set: 8},
 	Sq{Name: "Tax(i)", Price: 200}.nop(),
 	{Name: "Undardese Electartica", Price: 400, Rent: []int{50, 200, 600, 1400, 1700, 2000}, Set: 8},
+}
+
+var ChanceCards = []Ca{
+	{
+		Str: "Make General Repairs on All Your Property. For each house pay $25. For each hotel $100.",
+		Fun: func(w user.User) user.User {
+			for _, v := range w.Ho {
+				if v > 0 {
+					if v == 5 {
+						w.Money -= 100
+					} else {
+						w.Money -= 25
+					}
+				}
+			}
+
+			return w
+		},
+	},
+	{
+		Str: "Speeding fine $15.",
+		Fun: func(w user.User) user.User {
+			w.Money -= 15
+
+			return w
+		},
+	},
+	{
+		Str: "Go back three spaces.",
+		Fun: func(w user.User) user.User {
+			w.Pos -= 3
+			if w.Pos < 0 {
+				w.Pos += 40
+			}
+
+			return w
+		},
+	},
+	{
+		Str: "Bank pays you dividend of $50.",
+		Fun: func(w user.User) user.User {
+			w.Money += 50
+
+			return w
+		},
+	},
+	{
+		Str: "Pay poor tax of $15.",
+		Fun: func(w user.User) user.User {
+			w.Money -= 15
+
+			return w
+		},
+	},
+	{
+		Str: "Take a trip to This Is A Station. If you pass \"GO\" collect $200.",
+		Fun: func(w user.User) user.User {
+			if w.Pos > 5 {
+				w.Money += 200
+			}
+
+			w.Pos = 5
+
+			return w
+		},
+	},
+	{
+		Str: "ADVANCE to Undardese Electartica.",
+		Fun: func(w user.User) user.User {
+			w.Pos = 39
+
+			return w
+		},
+	},
+	{
+		Str: "ADVANCE to Something Road. If you pass \"GO\" collect $200.",
+		Fun: func(w user.User) user.User {
+			if w.Pos > 24 {
+				w.Money += 200
+			}
+
+			w.Pos = 24
+
+			return w
+		},
+	},
+	{
+		Str: "Your building loan matures. Collect $150.",
+		Fun: func(w user.User) user.User {
+			w.Money += 150
+
+			return w
+		},
+	},
+	{
+		Str: "ADVANCE to Small Mall. If you pass \"GO\" collect $200.",
+		Fun: func(w user.User) user.User {
+			if w.Pos > 11 {
+				w.Money += 200
+			}
+
+			w.Pos = 11
+
+			return w
+		},
+	},
+	{
+		Str: "Go to Jail. Go Directly to Jail. Do not pass \"GO\". Do not collect $200.",
+		Fun: func(w user.User) user.User {
+			w.Pos = 10
+			w.InJail = true
+
+			return w
+		},
+	},
 }
