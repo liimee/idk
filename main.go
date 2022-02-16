@@ -17,7 +17,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/liimee/idk/board"
+	"github.com/liimee/idk/user"
 )
+
+type User = user.User
 
 type H struct {
 	clis  map[*Cli]bool
@@ -35,18 +38,6 @@ type Cli struct {
 
 	game string
 	id   string
-}
-
-type User struct {
-	Name   string
-	Money  int
-	Pos    int
-	Id     string
-	Owns   []int
-	InJail bool
-	Color  string
-	Mo     []int
-	Ho     map[int]int
 }
 
 type Game struct {
@@ -257,6 +248,26 @@ func (c *Cli) ReadWs() {
 			}
 			if ss.Pos == 38 {
 				ss.Money -= 100
+			}
+			if board.Board[ss.Pos].Name == "Chance" {
+				random.Seed(time.Now().UnixNano())
+				rk := random.Intn(len(board.ChanceCards))
+				c.co.WriteJSON(map[string]string{
+					"S":   "card",
+					"Str": board.ChanceCards[rk].Str,
+					"T":   "a",
+				})
+				g.Players[GetIndexById(g.Turn, g)] = board.ChanceCards[rk].Fun(GetPlayerById(c.id, g))
+			}
+			if board.Board[ss.Pos].Name == "Community Chest" {
+				random.Seed(time.Now().UnixNano())
+				rk := random.Intn(len(board.CommunityChestCards))
+				c.co.WriteJSON(map[string]string{
+					"S":   "card",
+					"Str": board.CommunityChestCards[rk].Str,
+					"T":   "b",
+				})
+				g.Players[GetIndexById(g.Turn, g)] = board.CommunityChestCards[rk].Fun(GetPlayerById(c.id, g))
 			}
 			gs[c.game] = g
 

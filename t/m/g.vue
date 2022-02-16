@@ -65,6 +65,13 @@ import Board from './board.vue';
           </li>
         </ul>
       </div>
+      <div v-if="card.card">
+        <hr />
+        <div class="card">
+          <div><b>{{card.t == 'a' ? 'Chance' : 'Community Chest'}}</b></div>
+          {{card.str}}
+        </div>
+      </div>
     </div>
   </div>
   <div v-if="err.e" class="er">{{err.m}}</div>
@@ -140,6 +147,13 @@ li > a {
   -webkit-user-select: none;
   cursor: pointer;
 }
+
+.card {
+  border: solid 2px grey;
+  border-radius: 6px;
+  padding: 1em;
+  width: 60%;
+}
 </style>
 
 <script lang="ts">
@@ -166,7 +180,12 @@ export default {
         m: ''
       },
       res: false,
-      win: false
+      win: false,
+      card: {
+        card: false,
+        str: '',
+        t: 'a'
+      }
     }
   },
   unmounted() {
@@ -220,6 +239,11 @@ export default {
           break;
           case 'win':
           this.win = true;
+          break;
+          case 'card':
+          this.card.card = true;
+          this.card.str = ws.Str;
+          this.card.t = ws.T;
         }
       })
     },
@@ -237,6 +261,7 @@ export default {
     endTurn() {
       this.mt = false;
       this.rolled = false;
+      this.card.card = false;
       s.send(JSON.stringify({
         s: 'endturn'
       }))
