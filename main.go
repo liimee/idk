@@ -87,6 +87,10 @@ func main() {
 	if dev {
 		s = ":4000"
 	}
+	p, pp := os.LookupEnv("PORT")
+	if pp {
+		s = ":" + p
+	}
 
 	if !dev {
 		e.PathPrefix("/").HandlerFunc(fe)
