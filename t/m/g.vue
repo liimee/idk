@@ -167,6 +167,19 @@ li > a {
   font-weight: bold;
   letter-spacing: 2px;
 }
+
+@media (max-width: 750px) {
+  .parent {
+    grid-template-columns: 1fr;
+    grid-template-rows: 60vh max-content;
+    gap: 2em;
+  }
+
+  .board {
+    width: calc(100% - 2.2em);
+    height: 100%;
+  }
+}
 </style>
 
 <script lang="ts">
