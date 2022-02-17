@@ -5,7 +5,7 @@
     <div class="row" :data-row="x" :key="x" v-for="(_, x) in 4">
       <div class="c" :style="{background: `linear-gradient(to bottom, ${['transparent', '#CB8556', '#2AC3D1', '#FF0088', '#E88720', '#CB0000', '#F6BE16', '#00C750', '#0047CB'][board[(x*10)+i].Set]}, transparent 40%)`}" v-for="(s, i) in board.filter((_, e) => Math.floor(e / 10) == x)" :key="i" >
         <div><b>{{s.Name}}</b></div>
-        <div>{{['Chance', 'Community Chest', 'IN JAIL', 'Free Parking', 'Go to Jail :)'].includes(s.Name) ? '' : '$'+s.Price}}</div>
+        <div>{{s.Price < 1 ? '' : '$'+s.Price}}</div>
         <div style="color: grey" v-if="dt.some(v => v.Owns.includes((x*10)+i))">({{dt.find(v => v.Owns.includes((x*10)+i)).Name}})</div>
         <div v-if="dt.some(v => v.Ho[(x*10)+i])">
           <span v-if="dt.find(v => v.Ho[(x*10)+i]).Ho[(x*10)+i] < 5" v-for="_ in dt.find(v => v.Ho[(x*10)+i]).Ho[(x*10)+i]">🏠</span>
