@@ -235,7 +235,7 @@ func (c *Cli) ReadWs() {
 			g := gs[c.game]
 			ss := &g.Players[GetIndexById(g.Turn, g)]
 			random.Seed(time.Now().UnixNano())
-			ss.Pos += (random.Intn(5) + 1)
+			ss.Pos += (random.Intn(11) + 1)
 			if ss.Pos > 39 {
 				ss.Pos -= 40
 				ss.Money += 200
