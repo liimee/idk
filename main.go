@@ -244,7 +244,7 @@ func (c *Cli) ReadWs() {
 				ss.Pos = 10
 				ss.InJail = true
 			}
-			if WhoOwnsIt(c.game, ss.Pos) != c.id && WhoOwnsIt(c.game, ss.Pos) != "" && !IsMortgaged(ss.Pos, gs[c.game]) {
+			if WhoOwnsIt(c.game, ss.Pos) != c.id && WhoOwnsIt(c.game, ss.Pos) != "" && !IsMortgaged(ss.Pos, gs[c.game]) && ss.Pos%10 != 5 {
 				ss.Money -= board.Board[ss.Pos].Rent[gs[c.game].Players[GetIndexById(WhoOwnsIt(c.game, ss.Pos), gs[c.game])].Ho[ss.Pos]] // "0"
 				gs[c.game].Players[GetIndexById(WhoOwnsIt(c.game, ss.Pos), gs[c.game])].Money += board.Board[ss.Pos].Rent[gs[c.game].Players[GetIndexById(WhoOwnsIt(c.game, ss.Pos), gs[c.game])].Ho[ss.Pos]]
 			}
@@ -273,6 +273,11 @@ func (c *Cli) ReadWs() {
 					"T":   "b",
 				})
 				g.Players[GetIndexById(g.Turn, g)] = board.CommunityChestCards[rk].Fun(GetPlayerById(c.id, g))
+			}
+			if ss.Pos%10 == 5 {
+				n := Stations(gs[c.game].Players[GetIndexById(WhoOwnsIt(c.game, ss.Pos), gs[c.game])].Id, c.game)
+				ss.Money -= board.Board[ss.Pos].Rent[0] * n
+				gs[c.game].Players[GetIndexById(WhoOwnsIt(c.game, ss.Pos), gs[c.game])].Money += board.Board[ss.Pos].Rent[0] * n
 			}
 			gs[c.game] = g
 
@@ -623,6 +628,16 @@ func WhoOwnsIt(g string, n int) string {
 		}
 	}
 	return f
+}
+
+func Stations(g string, j string) int {
+	var s = 0
+	for _, k := range []int{5, 15, 25, 35} {
+		if WhoOwnsIt(j, k) == g {
+			s++
+		}
+	}
+	return s
 }
 
 func IsMortgaged(id int, g Game) bool {
